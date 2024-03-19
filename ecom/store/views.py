@@ -1,6 +1,4 @@
-from ipware import get_client_ip
 from django.contrib import messages
-from django.http.response import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q, Min, Max
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage

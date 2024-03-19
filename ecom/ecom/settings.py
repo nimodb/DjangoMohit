@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "phonenumber_field",
     "ckeditor",
-    # "fontawesomefree",
     "widget_tweaks",
     "django_filters",
     "store",
