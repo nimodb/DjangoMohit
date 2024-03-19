@@ -1,0 +1,563 @@
+{% extends 'base.html' %} {% load static %}{% load humanize %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}{{product.name}}{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- Content -->
+{% block content %}
+<div class="product-details-area pt-90 pb-90">
+  
+  <div class="container">
+    <div class="row">
+      {% if messages %}
+        {% for msg in messages %}
+        <div class="alert alert-{{msg.tags}} alert-dismissible fade show" role="alert">
+          {{msg}}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+      {% endif %}
+      <!-- image -->
+      <div class="col-lg-6 col-md-6">
+        <div class="product-details-img">
+          <div class="zoompro-border zoompro-span">
+            {% if product.photos.first.first_photo %}
+              <img
+                class="zoompro"
+                src="{{product.photos.first.first_photo.url}}"
+                data-zoom-image="{{product.photos.first.first_photo.url}}"
+                alt="{{product.name}}"
+              />
+            {% else %}
+              <img
+                class="zoompro"
+                src="{% static 'assets/images/product-details/product-detalis-l1.jpg' %}"
+                data-zoom-image="{% static 'assets/images/product-details/product-detalis-bl1.jpg' %}"
+                alt="{{product.name}}"
+              />
+            {% endif %}
+            {% if product.cal_price == 0 %}
+            <span><i class="fa-solid fa-fire-flame-curved"></i> Free</span>
+            {% elif product.pct_price != 0 %}
+            <span>-{{product.format_pct_price}}</span>
+            {% endif %}
+          </div>
+          <div id="gallery" class="mt-20 product-dec-slider">
+            {% if product.photos.first.first_photo %}
+            <a
+              data-image="{{product.photos.first.first_photo.url}}"
+              data-zoom-image="{{product.photos.first.first_photo.url}}"
+            >
+              <img src="{{product.photos.first.first_photo.url}}"
+              alt=""
+              width="90"
+              height="90"
+            >
+            </a>
+            {% endif %}
+            {% if product.photos.first.second_photo %}
+            <a
+              data-image="{{product.photos.first.second_photo.url}}"
+              data-zoom-image="{{product.photos.first.second_photo.url}}"
+            >
+              <img src="{{product.photos.first.second_photo.url}}"
+              alt="{{product.name}}"
+              width="90"
+              height="90"
+            >
+            </a>
+            {% endif %}
+            {% if product.photos.first.third_photo %}
+            <a
+              data-image="{{product.photos.first.third_photo.url}}"
+              data-zoom-image="{{product.photos.first.third_photo.url}}"
+            >
+              <img src="{{product.photos.first.third_photo.url}}"
+              alt="{{product.name}}"
+              width="90"
+              height="90"
+            >
+            </a>
+            {% endif %}
+            {% if product.photos.first.fourth_photo %}
+            <a
+              data-image="{{product.photos.first.fourth_photo.url}}"
+              data-zoom-image="{{product.photos.first.fourth_photo.url}}"
+            >
+              <img src="{{product.photos.first.fourth_photo.url}}"
+              alt="{{product.name}}"
+              width="90"
+              height="90"
+            >
+            </a>
+            {% endif %}
+            {% if product.photos.first.fifth_photo %}
+            <a
+              data-image="{{product.photos.first.fifth_photo.url}}"
+              data-zoom-image="{{product.photos.first.fifth_photo.url}}"
+            >
+              <img src="{{product.photos.first.fifth_photo.url}}"
+              alt="{{product.name}}"
+              width="90"
+              height="90"
+            >
+            </a>
+            {% endif %}
+            {% if product.photos.first.sixth_photo %}
+            <a
+              data-image="{{product.photos.first.sixth_photo.url}}"
+              data-zoom-image="{{product.photos.first.sixth_photo.url}}"
+            >
+              <img src="{{product.photos.first.sixth_photo.url}}"
+              alt="{{product.name}}"
+              width="90"
+              height="90"
+            >
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <!-- details -->
+      <div class="col-lg-6 col-md-6">
+        <div class="product-details-content pro-details-content-modify">
+          <!-- Edit Post -->
+          {% if is_owner %}
+          <p>
+            {% if product.status == "P" %}
+              <span class="badge text-bg-primary">{{product.get_status_display}}</span>
+              {% elif product.status == "RE" %}
+              <span class="badge text-bg-warning">{{product.get_status_display}}</span>
+              {% elif product.status == "A" %}
+              <span class="badge text-bg-success">{{product.get_status_display}}</span>
+              {% elif product.status == "R" %}
+              <span class="badge text-bg-danger">{{product.get_status_display}}</span>
+            {% endif %}
+            <small> - </small>
+            <a href="{% url 'members:edit_post' product.id %}">
+              <i class="fa-solid fa-pen-to-square"></i> Edit
+            </a>
+            <small> - </small>
+            <a href="{% url 'members:delete_post' product.id %}">
+              <i class="fa-solid fa-trash"></i> Delete
+            </a>
+          </p>
+          <hr>
+          {% endif %}
+          <!-- timesince -->
+          <p>
+            {{ product.timestamp|timesince }} ago
+          </p>
+          <!-- name -->
+          <h2>{{product.name}}</h2>
+          <!-- review -->
+          <div class="product-ratting-review">
+            {% if product.reviews.all %}
+              <div class="product-ratting">
+                {{product.average_rating.0|safe}}
+                <small>{{product.average_rating.1}}</small>
+              </div>
+              <div class="product-review">
+                  <span>{{product.reviews.count}} Reviews</span>
+              </div>
+            {% else %}
+              <p>No reviews yet.</p>
+            {% endif %}
+        </div>
+          <!-- group|breed -->
+          <div class="pro-details-size">
+            <span>Group | Breed:</span>
+            <div class="pro-details-size-content">
+              <ul>
+                <li>
+                  <i class="fa-solid fa-dog"></i>
+                  <a href="{% url 'store:group_detail' slug=product.group.slug %}"> {{product.group}}</a>,
+                  <a href="{% url 'store:group_detail' slug=product.group.slug %}">{{product.breed}}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- gender -->
+          <div class="pro-details-size">
+            <span>Gender:</span>
+            <div class="pro-details-size-content">
+              <ul>
+                <li>
+                  <a>
+                    {% if product.gender == "F" %}
+                      <i class="fa-solid fa-venus"></i>
+                    {% elif product.gender == "M" %}
+                      <i class="fa-solid fa-mars"></i>
+                    {% elif product.gender == "N" %}
+                      <i class="fa-solid fa-genderless"></i>
+                    {% endif %}
+                    {{product.get_gender_display}}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- Age -->
+          <div class="pro-details-size">
+            <span>Age:</span>
+            <div class="pro-details-size-content">
+              <ul>
+                <li>
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <a>{{ product.get_age}}</a>
+                  <small> ({{product.birthdate|date:"F j, Y"}})</small>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- Price -->
+          <div class="pro-details-price-wrap">
+            <div class="product-price">
+              {% if product.cal_price == 0 %}
+                <span style="color: #ff5151;"><i class="fa-solid fa-fire-flame-curved"></i> Free</span>
+              {% else %}
+                <span>{{product.cal_price}}</span>
+                {% if product.format_price != product.cal_price %}
+                  <span class="old">{{ product.format_price}}</span>
+                {% endif %}
+              {% endif %}
+            </div>
+            {% if product.pct_price != 0 %}
+              {% if product.price != 0 %}
+            <div class="dec-rang">
+              <span>-{{product.format_pct_price}}</span>
+            </div>
+              {% endif %}
+            {% endif %}
+          </div>
+          <!-- Contact -->
+          <div class="pro-details-compare-wishlist">
+            <div class="pro-details-compare">
+              <a title="Location" href="">
+                <i class="fa-solid fa-location-dot"></i>
+                {{product.creator.profile.country}}, {{product.creator.profile.city}}
+              </a>
+            </div>
+            <div class="pro-details-compare">
+              <a title="Click to call" href="tell:{{product.creator.profile.phone}}">
+                <i class="fa-solid fa-phone"></i> {{product.creator.profile.phone}}
+              </a>
+            </div>
+            <div class="pro-details-compare">
+              <a title="Click to e-mail" href="mailto:{{product.creator.email}}">
+                <i class="fa-solid fa-envelope"></i> {{product.creator.email}}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- description-review-wrapper -->
+<div class="description-review-wrapper pb-90">
+  <div class="container">
+    <div class="row">
+      <div class="ms-auto me-auto col-lg-10">
+        <div class="dec-review-topbar nav mb-40">
+          <a data-bs-toggle="tab" href="#des-details1">Description</a>
+          <a class="active" data-bs-toggle="tab" href="#des-details2"
+            >Specification</a
+          >
+          <a data-bs-toggle="tab" href="#des-details3">Reviews</a>
+        </div>
+        <div class="tab-content dec-review-bottom">
+          <!-- Description -->
+          <div id="des-details1" class="tab-pane">
+            <div class="description-wrap">
+              <p>{{product.description|safe}}</p>
+            </div>
+          </div>
+          <!-- Specification -->
+          <div id="des-details2" class="tab-pane active">
+            <div class="specification-wrap table-responsive">
+              <table>
+                <tbody>
+                  <tr>
+                    <td class="width1">Date posted</td>
+                    <td>{{ product.timestamp|timesince }} ago</td>
+                  </tr>
+                  <tr>
+                    <td class="width1">Name</td>
+                    <td>{{product.name}}</td>
+                  </tr>
+                  <tr>
+                    <td class="width1">Group</td>
+                    <td>{{product.group}}</td>
+                  </tr>
+                  <tr>
+                    <td class="width1">Breed</td>
+                    <td>{{product.breed}}</td>
+                  </tr>
+                  <tr>
+                    <td class="width1">Gender</td>
+                    <td>{{product.get_gender_display}}</td>
+                  </tr>
+                  <tr>
+                    <td class="width1">Age</td>
+                    <td>{{ product.get_age}}<small> ({{product.birthdate|date:"F j, Y"}})</small></td>
+                  </tr>
+                  <tr>
+                    <td class="width1">Author</td>
+                    <td>{{product.creator.username}}<small> ({{product.creator.get_full_name}})</small></td>
+                  </tr>
+                  <tr>
+                    <td class="width1">Location</td>
+                    <td>{{product.creator.profile.city}}, {{product.creator.profile.district}}, {{product.creator.profile.state}}, {{product.creator.profile.country}}</td>
+                  </tr>
+                  <tr>
+                    <td class="width1">E-mail</td>
+                    <td>
+                      <a title="Click to e-mail" href="mailto:{{product.creator.email}}">
+                        {{product.creator.email}}
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="width1">Mobile</td>
+                    <td>
+                      <a title="Click to call" href="tell:{{product.creator.profile.phone}}">
+                        {{product.creator.profile.phone}}
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Review -->
+          <div id="des-details3" class="tab-pane">
+            {% for review in product.reviews.all %}
+            <div class="blog-comment">
+              <ul class="comments">
+                <!-- Main Comment -->
+                <li class="clearfix">
+                  <img
+                    src="{% static '/assets/images/product-details/review-1.png' %}"
+                    class="avatar" alt="{{review.user.get_full_name}}" 
+                  >
+                  <div class="post-comments">
+                      <p class="meta">
+                        {{review.created_at|date:"F j, Y"}} <a>{{review.user.get_full_name}}</a> :
+                        {% if user.is_authenticated %}
+                        <i class="pull-right">
+                          <a href=""
+                            data-bs-toggle="modal"
+                            data-bs-target="#replyModal{{ review.id }}"
+                            data-bs-whatever="@mdo"
+                          >
+                            <small><i class="fa-solid fa-reply"></i> Reply</small>
+                          </a>
+                        </i>
+                        <!-- Modal -->
+                        <div class="modal fade" id="replyModal{{ review.id }}" tabindex="-1" aria-labelledby="replyLabel{{review.id}}" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <form method="post" action="{% url 'store:submit_reply' review.pk %}">
+                                <div class="modal-body">
+                                  <div class="mb-3">
+                                    <p>Reply to {{review.user.get_full_name}}'s message:</p>
+                                    <p>
+                                      <i class="fa-solid fa-quote-right"></i> {{review.comment}}
+                                    </p>
+                                  </div>
+                                  {% csrf_token %}
+                                    <div class="mb-3">
+                                      <label for="{{review_form.comment.id_for_label}}" class="col-form-label">
+                                        <i class="fa-solid fa-comments"></i> Message:
+                                      </label>
+                                      {{ reply_form.message }}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                  <button type="submit" class="btn btn-primary">Send message</button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                        {% else %}
+                        <i class="pull-right">
+                          <a href="{% url 'members:login_register' %}">
+                            <i class="fa-solid fa-right-to-bracket"></i> Login to replay
+                          </a>
+                        </i>
+                        {% endif %}
+                      </p>
+                      <p>
+                        {{review.comment}}
+                      </p>
+                  </div>
+                  <!-- Reply Comment -->
+                  <ul class="comments">
+                    {% for reply in review.replies.all %}
+                      <li class="clearfix">
+                            <img
+                            src="{% static '/assets/images/product-details/review-1.png' %}"
+                            class="avatar" alt="{{reply.user.get_full_name}}" 
+                          >
+                          <div class="post-comments">
+                              <p class="meta">
+                                {{reply.created_at|date:"F j, Y"}} <a>{{reply.user.get_full_name}}</a> :
+                              </p>
+                              <p>
+                                {{reply.message}}
+                              </p>
+                          </div>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            {% empty %}
+              <p>No reviews yet.</p>
+            {% endfor %}
+            <!-- Leave a Comment form -->
+            <hr>
+            {% if user.is_authenticated %}
+              {% if user.id != product.creator.id %}
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#leaveComment" data-bs-whatever="@mdo">
+                <i class="fa-solid fa-comments"></i> Leave Comment
+              </button>
+              <!-- form modal -->
+              <div class="modal fade" id="leaveComment" tabindex="-1" aria-labelledby="leaveCommentLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="leaveCommentLabel">New Comment</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{% url 'store:product' product.id %}">
+                      <!-- body -->
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                          <label for="{{review_form.rating.id_for_label}}" class="col-form-label">
+                            <i class="fa-solid fa-star"></i> Rating:
+                          </label>
+                          {{review_form.rating}}
+                        </div>
+                        <div class="mb-3">
+                          <label for="{{review_form.comment.id_for_label}}" class="col-form-label">
+                            <i class="fa-solid fa-comments"></i> Message:
+                          </label>
+                          {{ review_form.comment }}
+                        </div>
+                    </div>
+                    <!-- footer -->
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-danger">Send message</button>
+                    </div>
+                  </form>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            {% else %}
+              <a href="{% url 'members:login_register' %}" class="btn btn-danger">
+                Login <i class="fa-solid fa-right-to-bracket"></i>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Related Product -->
+<div class="product-area pb-85">
+  <div class="container">
+    <div class="section-title-6 mb-50 text-center">
+      <h2>Related Product</h2>
+    </div>
+    <div class="product-slider-active owl-carousel">
+      {% for product in products %}
+      <div class="product-wrap">
+        <div class="product-img mb-15">
+          <a href="{% url 'store:product' product.id %}">
+            {% if product.photos.first.first_photo %}
+              <img
+                src="{{product.photos.first.first_photo.url}}"
+                alt="{{product.name}}"/>
+              </a>
+            {% else %}
+              <img
+                src="{% static 'assets/images/product/pro-hm1-5.jpg' %}"
+                alt="{{product.name}}"/>
+            {% endif %}
+          </a>
+            {% if product.product_last_day %}
+              <span class="price-dec font-dec">NEW</span>
+            {% endif %}
+            {% if product.cal_price == 0 %}
+              <span class="price-dec">Free</span>
+            {% elif product.pct_price != 0 %}
+              <span class="price-dec">-{{product.pct_price}}</span>
+            {% endif %}
+        </div>
+        <div class="product-content">
+          <span>
+            <a href="{% url 'store:group_detail' slug=product.group.slug %}"> {{product.group}}</a>,
+            <a href="{% url 'store:group_detail' slug=product.group.slug %}">{{product.breed}}</a>
+          </span>
+          <br>
+          <h4>
+            <a href="{% url 'store:product' product.id %}">{{product.name}}</a>
+          </h4>
+          <span>
+            {% if product.gender == "F" %}
+              <i class="fa-solid fa-venus"></i>
+            {% elif product.gender == "M" %}
+              <i class="fa-solid fa-mars"></i>
+            {% elif product.gender == "N" %}
+              <i class="fa-solid fa-genderless"></i>
+            {% endif %}
+            {{product.get_gender_display}}
+          </span>
+          <span>
+             <i class="fa-solid fa-location-dot"></i>
+            {{product.creator.profile.country}}, {{product.creator.profile.city}}
+          </span>
+          <div class="price-addtocart">
+            <div class="product-price">
+              {% if product.cal_price == 0 %}
+              <span style="color: #ff5151;"><i class="fa-solid fa-fire-flame-curved"></i> Free</span>
+              {% else %}
+                <span >{{product.cal_price}}</span>
+                {% if product.format_price != product.cal_price %}
+                  <span class="old" >{{ product.format_price}}</span>
+                {% endif %}
+              {% endif %}
+            </div>
+            <div class="product-addtocart">
+              <a title="See More" href="{% url 'store:product' product.id %}">
+                <i class="fa-solid fa-paw"></i>  See more
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

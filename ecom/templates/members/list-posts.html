@@ -1,0 +1,354 @@
+{% extends 'base.html' %} {% load static %} {% load widget_tweaks %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}My Account{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- !Content -->
+{% block content %}
+<!-- my account wrapper start -->
+<div class="my-account-wrapper pt-100 pb-100">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <!-- My Account Page Start -->
+        <div class="myaccount-page-wrapper">
+          <!-- My Account Tab Menu Start -->
+          <div class="row">
+            <div class="col-lg-3 col-md-4">
+              <div class="myaccount-tab-menu nav" role="tablist">
+                <a href="{% url 'members:dashboard' %}"
+                  ><i class="fa-solid fa-gauge"></i> Dashboard</a
+                >
+                <a href="#posts" class="active" data-bs-toggle="tab"
+                  ><i class="fa-solid fa-paw"></i> Posts</a
+                >
+                <a href="{% url 'members:wishlist' %}"
+                  ><i class="fa-solid fa-heart"></i> My Favorite</a
+                >
+                <a href="{% url 'members:account_details' %}"
+                  ><i class="fa-solid fa-user-pen"></i> Account Details</a
+                >
+                <a href="{% url 'members:logout' %}"
+                  ><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a
+                >
+              </div>
+            </div>
+            <div class="col-lg-9 col-md-8">
+              <div class="tab-content" id="myaccountContent">
+                {% if messages %}
+                  {% for msg in messages %}
+                  <div class="alert alert-{{msg.tags}} alert-dismissible fade show" role="alert">
+                    {{msg}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+                <div  class="tab-pane fade show active" id="posts" role="tabpanel">
+                  <div class="myaccount-content">
+                    <h3>Posts</h3>
+                    <p>You can manage your posts here. Add, edit, or delete them as needed.</p>
+                    {% if products %}
+                    <a href="{% url 'members:add_post' %}" class="btn btn-danger">
+                      <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                      Add New Post
+                    </a>
+                    {% endif %}
+                    <hr>
+                    <div class="myaccount-table table-responsive text-center">
+                      {% if products %}
+                      <table class="table align-middle mb-0 bg-white">
+                        <thead >
+                          <tr>
+                            <th>Post</th>
+                            <th>Dogs</th>
+                            <th>timestamp</th>
+                            <th>Reviews</th>
+                            <th>Group | Breed</th>
+                            <th>Sex</th>
+                            <th>Age</th>
+                            <th>Price</th>
+                            <th>Discount</th>
+                            <th>on Web</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for product in products %}
+                          <!-- Modal Comment -->
+                          <div class="modal fade" id="commentModal{{product.id}}" tabindex="-1" aria-labelledby="commentLabel{{product.id}}" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <p class="modal-title fs-5" id="commentLabel{{product.id}}">
+                                    All Comment on post: <strong>{{product.name}}</strong>
+                                  </p>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" style="text-wrap: wrap; text-align: left;">
+                                  {% for review in product.reviews.all %}
+                                  <div class="blog-comment">
+                                    <ul class="comments">
+                                      <!-- Main Comment -->
+                                      <li class="clearfix">
+                                        <img
+                                          src="{% static '/assets/images/product-details/review-1.png' %}"
+                                          class="avatar" alt="{{review.user.get_full_name}}" 
+                                        >
+                                        <div class="post-comments">
+                                            <p class="meta">
+                                              {{review.created_at|date:"F j, Y"}} <a>{{review.user.get_full_name}}</a> :
+                                              <i class="pull-right">
+                                                <a
+                                                  class="" data-bs-toggle="collapse"
+                                                  href="#collapse{{review.id}}" role="button" aria-expanded="false"
+                                                  aria-controls="collapseExample"
+                                                >
+                                                  <small><i class="fa-solid fa-reply"></i> Reply</small>
+                                                </a>
+                                              </i>
+                                            </p>
+                                            <p>
+                                              {{review.comment}}
+                                            </p>
+                                            <div class="collapse" id="collapse{{review.id}}">
+                                              <div class="card card-body">
+                                                <form method="POST" action="{% url 'members:submit_reply' review.pk %}">
+                                                  <div class="modal-body">
+                                                    {% csrf_token %}
+                                                      <div class="mb-3">
+                                                        <label for="{{reply_form.message.id_for_label}}" class="col-form-label">
+                                                          <i class="fa-solid fa-comments"></i> Message:
+                                                        </label>
+                                                        {{ reply_form.message }}
+                                                      </div>
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <a
+                                                      class="" data-bs-toggle="collapse"
+                                                      href="#collapse{{review.id}}" role="button" aria-expanded="false"
+                                                      aria-controls="collapseExample"
+                                                    >Cancel</a>
+                                                    <button type="submit" class="btn btn-primary">Send message</button>
+                                                  </div>
+                                                </form>
+                                              </div>
+                                            </div>
+                                        </div>
+                                        <!-- Reply Comment -->
+                                        <ul class="comments">
+                                          {% for reply in review.replies.all %}
+                                            <li class="clearfix">
+                                                  <img
+                                                  src="{% static '/assets/images/product-details/review-1.png' %}"
+                                                  class="avatar" alt="{{reply.user.get_full_name}}" 
+                                                >
+                                                <div class="post-comments">
+                                                    <p class="meta">
+                                                      {{reply.created_at|date:"F j, Y"}} <a>{{reply.user.get_full_name}}</a> :
+                                                    </p>
+                                                    <p>
+                                                      {{reply.message}}
+                                                    </p>
+                                                </div>
+                                            </li>
+                                          {% endfor %}
+                                        </ul>
+                                      </li>
+                                    </ul>
+                                  </div>
+                                  <hr> <br>
+                                  {% empty %}
+                                  <p>No reviews yet.</p>
+                                  {% endfor %}
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- Modal Delete -->
+                          <div class="modal fade" id="deleteBackdrop{{product.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteBackdropLabel{{product.id}}" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h1 class="modal-title fs-5" id="deleteBackdropLabel{{product.id}}">Delete Post</h1>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form method="POST" action="{% url 'members:delete_post' product.pk %}">
+                                  {% csrf_token %}
+                                  <div class="modal-body">
+                                    <p>Are you sure you want to delete the following product?</p>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-dark btn-sm mt-2" data-bs-dismiss="modal">Cancel</button>
+                                    <button 
+                                      class="btn btn-danger btn-sm" 
+                                      type="submit"
+                                      value="1"
+                                      name="delete_post"
+                                    >
+                                      Delete Post
+                                    </button>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                          <!--  -->
+                          <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                              <div class="d-flex align-items-center">
+                                {% if product.photos.all %}
+                                  {% for photo in product.photos.all %}
+                                    {% if photo.first_photo %}
+                                      <img
+                                        src="{{photo.first_photo.url}}"
+                                        alt="{{product.name}}"
+                                        style="width: 45px; height: 45px"
+                                        class="rounded-circle"
+                                      />
+                                    {% else %}
+                                      <img
+                                        src="{% static 'assets/images/product-details/review-1.png' %}"
+                                        alt="{{product.name}}"
+                                        style="width: 45px; height: 45px"
+                                        class="rounded-circle"
+                                      />
+                                    {% endif %}
+                                  {% endfor %}
+                                {% else %}
+                                  <img
+                                    src="{% static 'assets/images/product-details/review-1.png' %}"
+                                    alt="{{product.name}}"
+                                    style="width: 45px; height: 45px"
+                                    class="rounded-circle"
+                                  />
+                                {% endif %}
+                                <div class="ms-3">
+                                  {% if product.status == "P" %}
+                                  <span class="badge text-bg-primary">{{product.get_status_display}}</span>
+                                  {% elif product.status == "RE" %}
+                                  <span class="badge text-bg-warning">{{product.get_status_display}}</span>
+                                  {% elif product.status == "A" %}
+                                  <span class="badge text-bg-success">{{product.get_status_display}}</span>
+                                  {% elif product.status == "R" %}
+                                  <span class="badge text-bg-danger">{{product.get_status_display}}</span>
+                                  {% endif %}
+                                </div>
+                              </div>
+                            </td>
+                            <td><small>{{ product.timestamp }}</small></td>
+                            <td>
+                              {% if product.reviews.all %}
+                              <span
+                                type="button" class="badge text-bg-light position-relative"
+                                data-bs-toggle="modal" data-bs-target="#commentModal{{product.id}}"
+                              >
+                                See Comments
+                                <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">
+                                  {{product.reviews.all|length}}
+                                </span>
+                              </span>
+                              <br>
+                              <small>
+                                <div class="product-ratting">
+                                  {{product.average_rating.0|safe}}
+                                  <small>{{product.average_rating.1}}</small>
+                                </div>
+                              </small>
+                              {% else %}
+                              <small>No reviews yet.</small>
+                              <br>
+                              {% endif %}
+                              {% if products_count %}
+                                {% for product_id, count in products_count.items %}
+                                {% if product_id == product.id %}
+                                  <small>
+                                      <i class="fa-solid fa-heart-circle-check"></i> saved: {{count}}
+                                  </small>
+                                  {% endif %}
+                                {% endfor %}
+                              {% endif %}
+                            </td>
+                            <td>
+                              <p class="fw-normal mb-1">
+                                <b>Group:</b> {{product.group}}
+                              </p>
+                              <p class="text-muted mb-0">
+                                <b>Breed:</b> {{product.breed}}
+                              </p>
+                            </td>
+                            <td>
+                              {% if product.male_inventory %}
+                              <p class="fw-normal mb-1" title="Male">
+                                <b><small><i class="fa-solid fa-mars"></i> : </small></b> {{product.male_inventory}}
+                              </p>
+                              {% endif %}
+                              {% if product.female_inventory %}
+                              <p class="fw-normal mb-1" title="Female">
+                                <b><small><i class="fa-solid fa-venus"></i> : </small></b> {{product.female_inventory}}
+                              </p>
+                              {% endif %}
+                            </td>
+                            <td>{{ product.get_age }}</td>
+                            <td>
+                              {% if product.cal_price == 0 %}
+                                Free
+                              {% else %}
+                                {{product.cal_price}}<br/>
+                                {% if product.format_price != product.cal_price %}
+                                  <span style="text-decoration: line-through" class="text-danger">
+                                    {{product.format_price}}
+                                  </span>
+                                {% endif %}
+                              {% endif %}
+                            </td>
+                            <td>{{product.format_pct_price}}</td>
+                            <td class="product-remove">
+                              <a href="{% url 'store:product' product.id %}"
+                                ><i class="fa-solid fa-link"></i> 
+                              </a>
+                            </td>
+                            <td class="product-remove">
+                              <a href="{% url 'members:edit_post' product.id %}"
+                                ><i class="fa-solid fa-pen-to-square"></i>
+                              </a>
+                            </td>
+                            <td class="product-remove">
+                              <a
+                                href="#" data-bs-toggle="modal" data-bs-target="#deleteBackdrop{{product.id}}"
+                                ><i class="fa-solid fa-trash"></i></a>
+                            </td>
+                          </tr>
+                        </tbody>
+                        {% endfor %}
+                      </table>
+                      {% else %}
+                      <p>No posts found. Start by creating your first post!</p>
+                      <a href="{% url 'members:add_post' %}" class="btn btn-danger">
+                        <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        Create Post
+                      </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

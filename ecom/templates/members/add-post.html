@@ -1,0 +1,191 @@
+{% extends 'base.html' %} {% load static %} {% load widget_tweaks %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}Add Post{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- !Content -->
+{% block content %}
+<div class="cart-main-area pt-85 pb-90">
+  <div class="container">
+    <h3 class="cart-page-title">{{add_post.page_title}}</h3>
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+        <form action="{% url 'members:add_post' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %} {{product_form.media}}
+          <div class="col-lg-12 col-md-6">
+            <div class="cart-tax">
+              <div class="title-wrap">
+                <h4 class="cart-bottom-title section-bg-gray">
+                  {{add_post.bottom_title}} 
+                </h4>
+              </div>
+              <div class="tax-wrapper">
+                <p>{{add_post.wrapper_text}}</p>
+                <div class="tax-select-wrapper">
+                  <!-- start form -->
+                  <div class="row">
+                    <!-- Group -->
+                    <div class="tax-select col-lg-4">
+                      <label for="id_group"> *{{product_form.group.label}} </label>
+                      {% render_field product_form.group autocomplete='off' hx-get="/my-account/check-breed/" hx-target='#id_breed' %}
+                    </div>
+                    <!-- Breed -->
+                    <div class="tax-select col-lg-4">
+                      <label for="id_breed"> *{{product_form.breed.label}} </label>
+                      {% render_field product_form.breed autocomplete="off" %}
+                    </div>
+                    <!-- Male Gender -->
+                    <div class="tax-select col-lg-2">
+                      <label for="id_male_inventory"> {{product_form.male_inventory.label}} </label>
+                      {{ product_form.male_inventory }}
+                    </div>
+                    <!-- Female Gender -->
+                    <div class="tax-select col-lg-2">
+                      <label for="id_female_inventory"> {{product_form.female_inventory.label}} </label>
+                      {{ product_form.female_inventory }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <!-- Price -->
+                    <div class="tax-select col-lg-3">
+                      <label for="id_price"> *{{product_form.price.label}} <small>(Ex: 1.99) ($0=Free)</small> </label>
+                      <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">$</span>
+                        {{ product_form.price }}
+                      </div>
+                    </div>
+                    <!-- Discount -->
+                    <div class="tax-select col-lg-3">
+                      <label for="id_pct_price">
+                        Discount
+                      </label>
+                      <div class="input-group mb-3">
+                        {{ product_form.pct_price }}
+                        <span class="input-group-text" id="basic-addon2">%</span>
+                      </div>
+                    </div>
+                    <!-- Date -->
+                    <div class="tax-select col-lg-4">
+                      <label for="id_birthdate">
+                        *{{product_form.birthdate.label}}
+                      </label>
+                      {{ product_form.birthdate }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <!-- Summary -->
+                    <div class="tax-select col-lg-12">
+                      <label for="id_summary">
+                        *{{product_form.summary.label}}
+                      </label>
+                      {{ product_form.summary }}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <!-- Desc -->
+                    <div class="tax-select col-lg-12">
+                      <label for="id_description">
+                        {{product_form.description.label}}:
+                      </label>
+                    </div>
+                    {{ product_form.description }}
+                  </div>
+                  <br>
+                  <!-- Images -->
+                  <a class="btn btn-secondary" data-bs-toggle="collapse"
+                    href="#collapseImages" role="button" aria-expanded="false" aria-controls="collapseImages">
+                    <i class="fa-solid fa-file-image"></i>
+                    Upload Images
+                  </a>
+                  <!-- Videos -->
+                  <a class="btn btn-secondary" data-bs-toggle="collapse"
+                    href="#collapseVideos" role="button" aria-expanded="false" aria-controls="collapseVideos">
+                    <i class="fa-solid fa-file-video"></i>
+                    Upload Videos
+                  </a>
+                  <!-- Images section -->
+                  <div class="collapse multi-collapse" id="collapseImages">
+                    <br>
+                    <div class="alert alert-warning alert-dismissible fade show" style="width: fit-content;" role="alert">
+                       Allowed extensions are:<strong> png, jpg, jpeg, gif, bmp, tiff, tif</strong>.
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div class="row">
+                      <div class="row row-cols-1 row-cols-md-3 g-4">
+                        {% for form in photo_form %}
+                        <div class="col">
+                          <div class="card">
+                            {% if form.value %}
+                              <a href="{{ form.value.url }}" target="_blank">
+                                <img src="{{ form.value.url }}" class="card-img-top" alt="...">
+                              </a>
+                            {% else %}
+                              <img src="{% static 'assets/images/product/pro-hm1-1.jpg' %}" class="card-img-top" alt="...">
+                            {% endif %}
+                            <div class="card-body">
+                              <h5 class="card-title">{{form.label_tag}}</h5>
+                              <div class="input-group mb-3">
+                                <input type="file" class="form-control" name="{{form.html_name}}" accept="image/*" id="{{form.auto_id}}">
+                              </div>
+                              <input type="checkbox" class="form-check-input mt-0" name="{{form.html_name}}-clear" id="{{form.auto_id}}-clear_id">
+                              <small class="card-text"><label for="{{form.html_name}}-clear_id">Delete by checking the box next to the video.</label></small>
+                            </div>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Videos section -->
+                  <div class="collapse multi-collapse" id="collapseVideos">
+                    <br>
+                    <div class="alert alert-warning alert-dismissible fade show" style="width: fit-content;" role="alert">
+                       Allowed extensions are:<strong> mp4, avi, mov, mkv, wmv, flv, webm</strong>.
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div class="row">
+                      <div class="row row-cols-1 row-cols-md-3 g-4">
+                        {% for form in video_form %}
+                        <div class="col">
+                          <div class="card">
+                            <div class="card-body">
+                              <h5 class="card-title">{{form.label_tag}}</h5>
+                              <div class="input-group mb-3">
+                                <input type="file" class="form-control" name="{{form.html_name}}" accept="video/*" id="{{form.auto_id}}">
+                              </div>
+                              <input type="checkbox" class="form-check-input mt-0" name="{{form.html_name}}-clear" id="{{form.auto_id}}-clear_id">
+                              <small class="card-text"><label for="{{form.html_name}}-clear_id">Delete by checking the box next to the image.</label></small>
+                            </div>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                  <br/><br/><br/> 
+                  <button
+                    class="cart-btn-2"
+                    type="submit"
+                    name="add_post"
+                    value="1"
+                  >
+                    Add Post
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

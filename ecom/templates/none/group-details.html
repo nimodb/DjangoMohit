@@ -1,0 +1,345 @@
+{% extends 'base.html' %} {% load static %}
+{% load humanize %}
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}{{group.name}}{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- !Content -->
+{% block content %}
+<div
+  class="breadcrumb-area bg-img"
+  style="background-image: url('/static/assets/images/bg/breadcrumb.jpg')"
+>
+  <div class="container">
+    <div class="breadcrumb-content text-center">
+      <h2>{{group.name}}</h2>
+      <ul>
+        <li>
+          <a href="{% url 'store:home' %}">Home</a>
+        </li>
+        <li class="active">{{group.name}}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="blog-details-area pt-90 pb-90">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="blog-details-wrap">
+          <div class="blog-details-img mb-40">
+            {% if group.image %}
+            <img src="{{ group.image.url }}" alt="{{group.name}}" />
+            {% else %}
+            <img
+              src="{% static 'assets/images/blog/blog-details.jpg' %}"
+              alt="{{group.name}}"
+            />
+            {% endif %}
+          </div>
+          <div class="row">
+            <div class="col-xl-2 col-lg-2">
+              <div class="blog-details-author">
+                <h4>
+                  <span>by</span> Robert Hutton,<br />
+                  Svenja O'Donnell<br />
+                  and Thomas Penny
+                </h4>
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-10">
+              <div class="blog-details-content">
+                <p class="mb-35">{{group.description}}</p>
+                <blockquote>
+                  <img
+                    src="{% static 'assets/images/icon-img/blockquote.png' %}"
+                    alt="blog"
+                  />
+                  <h3>
+                    Lorem Ipsum is simply dummy text of the printing and
+                    typesetting.
+                  </h3>
+                </blockquote>
+                <div class="blog-tag">
+                  <ul>
+                    <li><a href="#">markets</a></li>
+                    <li><a href="#">business</a></li>
+                    <li><a href="#">sport</a></li>
+                    <li><a href="#">special reports</a></li>
+                    <li><a href="#">culture</a></li>
+                  </ul>
+                </div>
+                <div class="blog-share">
+                  <span>share:</span>
+                  <ul>
+                    <li>
+                      <a class="facebook" href="#"
+                        ><i class="ti-facebook"></i> 125</a
+                      >
+                    </li>
+                    <li>
+                      <a class="twitter" href="#"
+                        ><i class="ti-twitter-alt"></i> 502</a
+                      >
+                    </li>
+                    <li>
+                      <a class="google" href="#"
+                        ><i class="ti-google"></i> 25</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div class="blog-comment-area">
+                  <h4>Comments</h4>
+                  <div class="blog-comment-wrap">
+                    <div class="single-blog-comment">
+                      <div class="blog-comment-img">
+                        <img
+                          src="{% static 'assets/images/blog/comment-1.png' %}"
+                          alt="comment-img"
+                        />
+                      </div>
+                      <div class="blog-comment-content">
+                        <div class="blog-comment-top">
+                          <h5>john doe</h5>
+                          <span
+                            ><img
+                              src="{% static 'assets/images/icon-img/calender.png' %}"
+                              alt="calender"
+                            />
+                            2 hours ago</span
+                          >
+                        </div>
+                        <p>
+                          While Cameron has had a great night, I suspect his
+                          problems in some way have only just begun.
+                        </p>
+                      </div>
+                    </div>
+                    <div class="single-blog-comment">
+                      <div class="blog-comment-img">
+                        <img
+                          src="{% static 'assets/images/blog/comment-3.png' %}"
+                          alt="comment-img"
+                        />
+                      </div>
+                      <div class="blog-comment-reply">
+                        <textarea placeholder="Your comment..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Group Product -->
+<div class="product-area pb-85">
+  <div class="container">
+    <div class="section-title-6 mb-50 text-center">
+      <h2>Related Product</h2>
+    </div>
+    <div class="shop-area pt-90 pb-90">
+      <div class="container">
+        <div class="row flex-row-reverse">
+          <div class="col-lg-3">
+            <div class="sidebar-wrapper">
+              <div class="sidebar-widget">
+                <h4 class="sidebar-title">Search</h4>
+                <div class="sidebar-search mb-40 mt-20">
+                  <form class="sidebar-search-form">
+                    {% csrf_token %}
+                    <input 
+                      type="text"
+                      placeholder="Search here..." 
+                      name="search"
+                      hx-post="/groups/{{group.slug}}/search-product/"
+                      hx-target="#results"
+                      hx-trigger="keyup changed delay:500ms"
+                    />
+                  </form>
+                </div>
+              </div>
+              <div class="sidebar-widget shop-sidebar-border pt-40">
+                <h4 class="sidebar-title">Breed</h4>
+                <div class="shop-catigory mt-20">
+                  <ul id="faq">
+                    <input type="hidden" name="breed" id="breedInput">
+                    {% for breed in breeds %}
+                    <li>
+                      <a
+                        href=""
+                      >
+                        {{breed.name}}<small>({{breed.product_count}})</small>
+                      </a>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+              <form method="get" action="{% url 'store:group_detail' group.slug %}">
+              <div class="sidebar-widget pt-40 mt-40 shop-sidebar-border">
+                <h4 class="sidebar-title">Gender</h4>
+                <div class="sidebar-widget-list mt-20">
+                  <ul>
+                    {% for choice_value, choice_label in form.fields.gender.choices %}
+                      <li>
+                        <div class="form-check">
+                            <input
+                                class="form-check-input" type="checkbox"
+                                name="gender" value="{{choice_value}}"
+                                id="id_gender_{{forloop.counter}}"
+                                {% if choice_value in selected_genders %}
+                                    checked
+                                {% endif %}
+                            >
+                            <label
+                                class="form-check-label"
+                                for="id_gender_{{forloop.counter}}"
+                            >
+                                {{choice_label}}
+                            </label>
+                        </div>
+                    </li>
+                    {% endfor %}
+                    <button type="submit">click</button>
+                  </ul>
+                </div>
+              </div>
+              <div class="shop-price-filter mt-35 shop-sidebar-border pt-40 sidebar-widget">
+                <h4 class="sidebar-title">Price Filter</h4>
+                <div class="price-filter mt-20">
+                  <span>Range:  ${{min_max_price.price__min}} - {{min_max_price.price__max|intcomma}} </span>
+                    {{form.price}}
+                </div>
+              </div>
+              <div class="shop-price-filter mt-35 shop-sidebar-border pt-40 sidebar-widget">
+                <h4 class="sidebar-title">Age Filter</h4>
+                <div class="price-filter mt-20">
+                </div>
+              </div>
+            </form>
+            </div>
+          </div>
+          <div class="col-lg-9" id="results">
+            <div class="shop-topbar-wrapper">
+              <div class="shop-topbar-left">
+                <p>Showing {{ products.start_index }} - {{ products.end_index }} of {{ products.paginator.count }} results</p>
+              </div>
+            </div>
+            <div class="shop-bottom-area">
+              <div class="tab-content jump">
+                <div id="shop-2" class="tab-pane active">
+                  {% for product in products %}
+                  <div class="shop-list-wrap mb-30">
+                    <div class="row">
+                      <!-- image -->
+                      <div class="col-xl-4 col-lg-5 col-md-6 col-sm-6 product-wrap">
+                        <div class="product-list-img product-img mb-15">
+                            <a href="{% url 'store:product' product.id %}">
+                              {% if product.photos.all %}
+                                {% for photo in product.photos.all %}
+                                  {% if photo.first_photo %}
+                                    <img src="{{photo.first_photo.url}}" alt="{{product.name}}" />
+                                  {% else %}
+                                    <img
+                                      src="{% static 'assets/images/product/pro-hm1-1.jpg' %}"
+                                      alt="{{product.name}}"
+                                    />
+                                  {% endif %}
+                                {% endfor %}
+                              {% else %}
+                                <img
+                                  src="{% static 'assets/images/product/pro-hm1-1.jpg' %}"
+                                  alt="{{product.name}}"
+                                />
+                              {% endif %}
+                            </a>
+                            {% if product.product_last_week %}
+                            <span class="price-dec font-dec">NEW</span>
+                            {% endif %}
+                            {% if product.pct_price != 0 %}
+                            <span class="price-dec">-{{product.pct_price}}</span>
+                            {% endif %}
+                          <div class="">
+                            <a></a>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- detail -->
+                      <div class="col-xl-8 col-lg-7 col-md-6 col-sm-6">
+                        <div class="shop-list-content">
+                          <span>{{product.breed}} • {{product.get_gender_display}}</span>
+                          <h4>
+                            <a href="{% url 'store:product' product.id %}"
+                              >{{product.name}}</a
+                            >
+                          </h4>
+                          <div class="pro-list-price">
+                            <span>{{product.cal_price}}</span>
+                            {% if product.cal_price != 'Free' %}
+                            <span class="old-price">${{product.price}}</span>
+                            {% endif %}
+                          </div>
+                          <p>
+                            {{product.description|slice:":145"}}
+                          </p>
+                          <small>
+                            <a title="Location" href="">
+                              <i class="la la-map-marker"></i> 
+                              {{product.creator.profile.country}}, {{product.creator.profile.city}}
+                            </a>
+                          </small>
+                          <div class="product-list-action">
+                            <a title="Phone:{{product.creator.profile.phone}}" href="tell:{{product.creator.profile.phone}}"><i class="la la-phone"></i></a>
+                            <a title="E-mail:{{product.creator.email}}" href="mailto:{{product.creator.email}}"><i class="la la-envelope"></i></a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% if products.has_other_pages %}
+                <div class="pagination-style text-center">
+                  <ul>
+                    {% if products.has_previous %}
+                      <li><a class="prev" href="?page={{ products.previous_page_number }}"><i class="la la-angle-left"></i></a></li>
+                    {% else %}
+                      <li><span class="disabled"><i class="la la-angle-left"></i></span></li>
+                    {% endif %}
+    
+                    {% for page_num in products.paginator.page_range %}
+                      {% if products.number == page_num %}
+                        <li><a class="active" href="#">{{ page_num }}</a></li>
+                      {% else %}
+                        <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                      {% endif %}
+                    {% endfor %}
+                    {% if products.has_next %}
+                      <li><a class="next" href="?page={{ products.next_page_number }}"><i class="la la-angle-right"></i></a></li>
+                    {% else %}
+                      <li><span class="disabled"><i class="la la-angle-right"></i></span></li>
+                    {% endif %}
+                  </ul>
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

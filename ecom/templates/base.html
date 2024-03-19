@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>{% block title %} {% endblock %}</title>
+    <meta name="description" content="{% block description %} {% endblock %}" />
+    <meta name="Keywords" content="{% block Keywords %} {% endblock %}" />
+    <meta name="author" content="{% block author %} {% endblock %}" />
+    <meta name="robots" content="noindex, follow" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <!-- CSS -->
+    {% include 'partials/css.html' %}
+  </head>
+
+  <body>
+    <div class="main-wrapper">
+      <!-- Header -->
+      {% include 'partials/navbar.html' %}
+      <!-- Content -->
+      {% block content %} {% endblock %}
+      <!-- Footer -->
+      {% include 'partials/footer.html' %}
+    </div>
+    <!-- JS  -->
+    {% include 'partials/javascript.html' %}
+  </body>
+</html>

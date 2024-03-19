@@ -1,0 +1,220 @@
+{% extends 'base.html' %} {% load static %} {% load widget_tweaks %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}My Favorite{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- !Content -->
+{% block content %}
+<div class="my-account-wrapper pt-100 pb-100">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <!-- My Account Page Start -->
+        <div class="myaccount-page-wrapper">
+          <!-- My Account Tab Menu Start -->
+          <div class="row">
+            <div class="col-lg-3 col-md-4">
+              <div class="myaccount-tab-menu nav" role="tablist">
+                <a href="{% url 'members:dashboard' %}"
+                  ><i class="fa-solid fa-gauge"></i> Dashboard</a
+                >
+                <a href="{% url 'members:list_posts' %}"
+                  ><i class="fa-solid fa-paw"></i> Posts</a
+                >
+                <a href="#posts" class="active" data-bs-toggle="tab"
+                  ><i class="fa-solid fa-heart"></i> My Favorite</a
+                >
+                <a href="{% url 'members:account_details' %}"
+                  ><i class="fa-solid fa-user-pen"></i> Account Details</a
+                >
+                <a href="{% url 'members:logout' %}"
+                  ><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a
+                >
+              </div>
+            </div>
+            <div class="col-lg-9 col-md-8">
+              <div class="tab-content" id="myaccountContent">
+                {% if messages %}
+                  {% for msg in messages %}
+                  <div class="alert alert-{{msg.tags}} alert-dismissible fade show" role="alert">
+                    {{msg}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+                <div  class="tab-pane fade show active" id="posts" role="tabpanel">
+                  <div class="myaccount-content">
+                    <h3>My Favorite</h3>
+                    <p>You can save your favorite Dogs here for later.</p>
+                    {% if products %}
+                    <a href="{% url 'members:add_post' %}" class="btn btn-danger">
+                      <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                      Add New Post
+                    </a>
+                    {% endif %}
+                    <hr>
+                    {% if wishlist %}
+                      <div class="row row-cols-1 row-cols-md-3 g-4">
+                      {% for product in wishlist.products.all %}
+                      <!-- Modal Delete -->
+                      <div class="modal fade" id="deleteBackdrop{{product.id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteBackdropLabel{{product.id}}" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="deleteBackdropLabel{{product.id}}">Delete Post</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method="POST" action="{% url 'members:remove_from_wishlist' product.pk %}">
+                              {% csrf_token %}
+                              <div class="modal-body">
+                                <p>Are you sure you want to Remove the following product?</p>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-dark btn-sm mt-2" data-bs-dismiss="modal">Cancel</button>
+                                <button 
+                                  class="btn btn-danger btn-sm" 
+                                  type="submit"
+                                  value="1"
+                                  name="delete_post"
+                                >
+                                  Remove Post
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Details -->
+                      <div class="col">
+                          <div class="card">
+                            <!-- Image -->
+                            <div class="product-wrap">
+                              <div class="product-img">
+                                {% if product.photos.first.first_photo %}
+                                  <img src="{{product.photos.first.first_photo.url}}" class="card-img-top" alt="{{product.name}}">
+                                {% else %}
+                                  <img src="{% static 'assets/images/product/pro-hm1-5.jpg' %}" class="card-img-top" alt="{{product.name}}">
+                                {% endif %}
+                                {% if product.product_last_day %}
+                                  <span class="price-dec font-dec">NEW</span>
+                                {% endif %}
+                                {% if product.cal_price == 0 %}
+                                  <span class="price-dec">Free</span>
+                                {% elif product.pct_price != 0 %}
+                                  <span class="price-dec">-{{product.pct_price}}%</span>
+                                {% endif %}
+                              </div>
+                            </div>
+                            <div class="card-body">
+                              <!-- Reviews & Delete -->
+                              <div class="row pb-15">
+                                <!-- Reviews -->
+                                <div class="col">
+                                  <span>
+                                    {% if product.reviews.all %}
+                                      <small>
+                                        <div class="product-ratting">
+                                          {{product.average_rating.0|safe}}
+                                          <small>{{product.average_rating.1}}</small>
+                                        </div>
+                                      </small>
+                                      {% else %}
+                                        <small>No reviews yet.</small>
+                                      {% endif %}
+                                  </span>
+                                </div>
+                                <!-- Delete -->
+                                <div class="col-auto">
+                                  <a
+                                    href="#"
+                                    class="pr-10 pt-10"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteBackdrop{{product.id}}"
+                                  >
+                                    <i class="fa-solid fa-trash"></i>
+                                  </a>
+                                </div>
+                              </div>
+                              <!-- Breed and Group -->
+                              <h5 class="card-title">
+                                <small>Breed:</small>
+                                <a href="product-details.html">{{product.breed}}</a>
+                                <a href="product-details.html"><small>({{product.group}})</small></a>
+                              </h5>
+                              <!-- Gender -->
+                              <h5 class="card-title">
+                                <small>Gender:</small>
+                                {% if product.male_inventory %}
+                                  Male : {{product.male_inventory}}
+                                {% endif %}
+                                {% if product.female_inventory %}
+                                  Female : {{product.female_inventory}}
+                                {% endif %}
+                              </h5>
+                              <!-- Age -->
+                              <h5 class="card-title">
+                                <small>Age:</small>
+                                {{ product.get_age }} old
+                              </h5>
+                              <!-- Location -->
+                              <h5 class="card-title">
+                                <small>
+                                  <i class="fa-solid fa-location-dot"></i>
+                                </small>
+                                {{product.creator.profile.country}}, {{product.creator.profile.state}}, {{product.creator.profile.district}}, {{product.creator.profile.city}}
+                              </h5>
+                              <!-- Price -->
+                              <div class="pro-list-price">
+                                {% if product.cal_price == 0 %}
+                                    <span class="text-danger"><i class="fa-solid fa-fire-flame-curved"></i> Free</span>
+                                {% else %}
+                                    <span >{{product.cal_price}}</span>
+                                    {% if product.format_price != product.cal_price %}
+                                    <span class="old text-danger" style="text-decoration: line-through" ><small>{{ product.format_price}}</small></span>
+                                    {% endif %}
+                                {% endif %}
+                              </div>
+                              <!-- Contact and see more -->
+                              <div class="row pt-15">
+                                <!-- Contact -->
+                                <div class="col">
+                                    <div class="product-list-action">
+                                        <a class="pr-10" title="Call" href="tel:{{product.creator.profile.phone}}"><i class="fa-solid fa-phone"></i></a>
+                                        <a title="E-mail" href="mailto:{{product.creator.email}}"><i class="fa-solid fa-envelope"></i></a>
+                                    </div>
+                                </div>
+                                <!-- See more -->
+                                <div class="col-auto">
+                                    <a title="See More" href="{% url 'store:product' product.id %}">
+                                        <i class="fa-solid fa-paw"></i>  See more
+                                    </a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% empty %}
+                        <p>Your wishlist is empty.</p>
+                      {% endfor %}
+                      </div>
+                    {% else %}
+                    <p>You don't have a wishlist yet.</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

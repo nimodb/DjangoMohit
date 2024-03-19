@@ -1,0 +1,99 @@
+{% extends 'base.html' %} {% load static %} {% load widget_tweaks %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}My Account{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- !Content -->
+{% block content %}
+<!-- my account wrapper start -->
+<div class="my-account-wrapper pt-100 pb-100">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <!-- My Account Page Start -->
+        <div class="myaccount-page-wrapper">
+          <!-- My Account Tab Menu Start -->
+          <div class="row">
+            <div class="col-lg-3 col-md-4">
+              <div class="myaccount-tab-menu nav" role="tablist">
+                <a href="#dashboad" class="active" data-bs-toggle="tab"
+                  ><i class="fa-solid fa-gauge"></i> Dashboard</a
+                > 
+                {% if user.profile.verified == 'V' %}
+                <a href="{% url 'members:list_posts' %}"
+                  ><i class="fa-solid fa-paw"></i> Posts</a
+                >
+                {% endif %}
+                <a href="{% url 'members:wishlist' %}"
+                  ><i class="fa-solid fa-heart"></i> My Favorite</a
+                >
+                <a href="{% url 'members:account_details' %}"
+                  ><i class="fa-solid fa-user-pen"></i> Account Details</a
+                >
+                <a href="{% url 'members:logout' %}"
+                  ><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a
+                >
+              </div>
+            </div>
+            <div class="col-lg-9 col-md-8">
+              <div class="tab-content" id="myaccountContent">
+                {% if messages %}
+                  {% for msg in messages %}
+                  <div class="alert alert-{{msg.tags}} alert-dismissible fade show" role="alert">
+                    {{msg}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+                <div
+                  class="tab-pane fade show active"
+                  id="dashboad"
+                  role="tabpanel"
+                >
+                  <div class="myaccount-content">
+                    <h3>Dashboard</h3>
+                    <div class="welcome">
+                      <p>Hello, <strong>{{user.get_full_name}}</strong>! 👋</p>
+                    </div>
+                    <p class="mb-0 welcome">
+                      {% if user.profile.verified == 'V' %} ✅ Your profile has
+                      been <strong>verified</strong>. <br />
+                      You can now create and manage your posts.
+                      <!--  -->
+                      {% elif user.profile.verified == 'I' %} ❗ Your profile is
+                      <strong>Incomplete</strong>. Please ensure that your
+                      profile is complete with all required information to
+                      expedite the verification process.
+                      <!--  -->
+                      {% elif user.profile.verified == 'P' %} ⏳ Your profile is
+                      <strong>pending verification</strong>
+                      <small>(Please wait for our team to review it.)</small>.
+                      Once verified, you'll be able to create and manage your
+                      posts. Thank you for your patience.
+                      <!--  -->
+                      {% elif user.profile.verified == 'R' %} ❌ Your profile
+                      has been <strong>rejected</strong>. Please review and
+                      update your information. Once corrected, we'll review your
+                      profile for verification again.
+                      <!--  -->
+                      {% endif %}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

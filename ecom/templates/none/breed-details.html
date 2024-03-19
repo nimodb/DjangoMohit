@@ -1,0 +1,352 @@
+{% extends 'base.html' %} {% load static %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}{{breed.name}}{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- !Content -->
+{% block content %}
+<div
+  class="breadcrumb-area bg-img"
+  style="background-image: url('/static/assets/images/bg/breadcrumb.jpg')"
+>
+  <div class="container">
+    <div class="breadcrumb-content text-center">
+      <h2>{{breed.name}}</h2>
+      <ul>
+        <li>
+          <a href="{% url 'store:home' %}">Home</a>
+        </li>
+        <li>
+          <a href="{% url 'store:group_detail' breed.group.slug %}"
+            >{{breed.group}}</a
+          >
+        </li>
+        <li class="active">{{breed.name}}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="blog-details-area pt-90 pb-90">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="blog-details-wrap">
+          <div class="blog-details-img mb-40">
+            {% if breed.image %}
+            <img src="{{ breed.image.url }}" alt="{{breed.name}}" />
+            {% else %}
+            <img
+              src="{% static 'assets/images/blog/blog-details.jpg' %}"
+              alt="{{breed.name}}"
+            />
+            {% endif %}
+          </div>
+          <div class="row">
+            <div class="col-xl-2 col-lg-2">
+              <div class="blog-details-author">
+                <h4>
+                  <span>by</span> Robert Hutton,<br />
+                  Svenja O'Donnell<br />
+                  and Thomas Penny
+                </h4>
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-10">
+              <div class="blog-details-content">
+                <p class="mb-35">{{breed.description}}</p>
+                <blockquote>
+                  <img
+                    src="{% static 'assets/images/icon-img/blockquote.png' %}"
+                    alt="blog"
+                  />
+                  <h3>
+                    Lorem Ipsum is simply dummy text of the printing and
+                    typesetting.
+                  </h3>
+                </blockquote>
+                <div class="blog-tag">
+                  <ul>
+                    <li><a href="#">markets</a></li>
+                    <li><a href="#">business</a></li>
+                    <li><a href="#">sport</a></li>
+                    <li><a href="#">special reports</a></li>
+                    <li><a href="#">culture</a></li>
+                  </ul>
+                </div>
+                <div class="blog-share">
+                  <span>share:</span>
+                  <ul>
+                    <li>
+                      <a class="facebook" href="#"
+                        ><i class="ti-facebook"></i> 125</a
+                      >
+                    </li>
+                    <li>
+                      <a class="twitter" href="#"
+                        ><i class="ti-twitter-alt"></i> 502</a
+                      >
+                    </li>
+                    <li>
+                      <a class="google" href="#"
+                        ><i class="ti-google"></i> 25</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                <div class="blog-comment-area">
+                  <h4>Comments</h4>
+                  <div class="blog-comment-wrap">
+                    <div class="single-blog-comment">
+                      <div class="blog-comment-img">
+                        <img
+                          src="{% static 'assets/images/blog/comment-1.png' %}"
+                          alt="comment-img"
+                        />
+                      </div>
+                      <div class="blog-comment-content">
+                        <div class="blog-comment-top">
+                          <h5>john doe</h5>
+                          <span
+                            ><img
+                              src="{% static 'assets/images/icon-img/calender.png' %}"
+                              alt="calender"
+                            />
+                            2 hours ago</span
+                          >
+                        </div>
+                        <p>
+                          While Cameron has had a great night, I suspect his
+                          problems in some way have only just begun.
+                        </p>
+                      </div>
+                    </div>
+                    <div class="single-blog-comment">
+                      <div class="blog-comment-img">
+                        <img
+                          src="{% static 'assets/images/blog/comment-3.png' %}"
+                          alt="comment-img"
+                        />
+                      </div>
+                      <div class="blog-comment-reply">
+                        <textarea placeholder="Your comment..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Related Product -->
+{% if products %}
+<div class="product-area pb-85">
+  <div class="container">
+    <div class="section-title-6 mb-50 text-center">
+      <h2>Related Product</h2>
+    </div>
+    <div class="product-slider-active owl-carousel">
+      {% for product in products %}
+      <div class="product-wrap">
+        <div class="product-img mb-15">
+          <a href="product-details.html">
+            {% if product.image %}
+            <img src="{{product.image.url}}" alt="{{product.name}}" />
+            {% else %}
+            <img
+              src="{% static 'assets/images/product/pro-hm1-5.jpg' %}"
+              alt="{{product.name}}"
+            />
+            {% endif %}
+          </a>
+          {% if product.product_last_week %}
+          <span class="price-dec font-dec">NEW</span>
+          {% endif %} {% if product.price != 0 %}
+          <!--  -->
+          {% if product.pct_price != 0 %}
+          <span class="price-dec">-{{product.pct_price}}%</span>
+          {% endif %}{% endif %}
+          <!-- <span class="new-stock"
+                ><span>Stock <br />Out</span></span
+              > -->
+          <div class="product-action">
+            <a
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+              title="Quick View"
+              href="#"
+              ><i class="la la-plus"></i
+            ></a>
+            <a title="Wishlist" href="#"><i class="la la-heart-o"></i></a>
+            <a title="Compare" href="#"><i class="la la-retweet"></i></a>
+          </div>
+        </div>
+        <div class="product-content">
+          <span>{{product.breed}} • {{product.get_gender_display}}</span>
+          <h4><a href="product-details.html">{{product.name}}</a></h4>
+          <div class="price-addtocart">
+            <div class="product-price">
+              {% if product.price == 0 %}
+              <span>Free</span>
+              {% elif product.cal_price == 0 %}
+              <span>Free</span>
+              {% elif product.pct_price == 0 %}
+              <span>${{product.price}}</span>
+              {% elif product.cal_price != 0 %}
+              <span>${{product.cal_price}}</span>
+              <span class="old">${{product.price}}</span>
+              {% endif %}
+            </div>
+            <div class="product-addtocart">
+              <a title="Add To Cart" href="#">+ Add To Cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <!-- <div class="product-wrap">
+        <div class="product-img mb-15">
+          <a href="product-details.html"
+            ><img
+              src="{% static 'assets/images/product/pro-hm1-6.jpg' %}"
+              alt="product"
+          /></a>
+          <div class="product-action">
+            <a
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+              title="Quick View"
+              href="#"
+              ><i class="la la-plus"></i
+            ></a>
+            <a title="Wishlist" href="#"><i class="la la-heart-o"></i></a>
+            <a title="Compare" href="#"><i class="la la-retweet"></i></a>
+          </div>
+        </div>
+        <div class="product-content">
+          <span>Chair</span>
+          <h4><a href="product-details.html">Golden Easy Spot Chair.</a></h4>
+          <div class="price-addtocart">
+            <div class="product-price">
+              <span>$210.00</span>
+              <span class="old">$230.00</span>
+            </div>
+            <div class="product-addtocart">
+              <a title="Add To Cart" href="#">+ Add To Cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-wrap">
+        <div class="product-img mb-15">
+          <a href="product-details.html"
+            ><img
+              src="{% static 'assets/images/product/pro-hm1-7.jpg' %}"
+              alt="product"
+          /></a>
+          <div class="product-action">
+            <a
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+              title="Quick View"
+              href="#"
+              ><i class="la la-plus"></i
+            ></a>
+            <a title="Wishlist" href="#"><i class="la la-heart-o"></i></a>
+            <a title="Compare" href="#"><i class="la la-retweet"></i></a>
+          </div>
+        </div>
+        <div class="product-content">
+          <span>Chair</span>
+          <h4><a href="product-details.html">Golden Easy Spot Chair.</a></h4>
+          <div class="price-addtocart">
+            <div class="product-price">
+              <span>$250.00</span>
+            </div>
+            <div class="product-addtocart">
+              <a title="Add To Cart" href="#">+ Add To Cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-wrap">
+        <div class="product-img mb-15">
+          <a href="product-details.html"
+            ><img
+              src="{% static 'assets/images/product/pro-hm1-8.jpg' %}"
+              alt="product"
+          /></a>
+          <div class="product-action">
+            <a
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+              title="Quick View"
+              href="#"
+              ><i class="la la-plus"></i
+            ></a>
+            <a title="Wishlist" href="#"><i class="la la-heart-o"></i></a>
+            <a title="Compare" href="#"><i class="la la-retweet"></i></a>
+          </div>
+        </div>
+        <div class="product-content">
+          <span>Chair</span>
+          <h4><a href="product-details.html">Golden Easy Spot Chair.</a></h4>
+          <div class="price-addtocart">
+            <div class="product-price">
+              <span>$320.00</span>
+              <span class="old">$120.00</span>
+            </div>
+            <div class="product-addtocart">
+              <a title="Add To Cart" href="#">+ Add To Cart</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-wrap">
+        <div class="product-img mb-15">
+          <a href="product-details.html"
+            ><img
+              src="{% static 'assets/images/product/pro-hm1-6.jpg' %}"
+              alt="product"
+          /></a>
+          <span class="price-dec">-30%</span>
+          <div class="product-action">
+            <a
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+              title="Quick View"
+              href="#"
+              ><i class="la la-plus"></i
+            ></a>
+            <a title="Wishlist" href="#"><i class="la la-heart-o"></i></a>
+            <a title="Compare" href="#"><i class="la la-retweet"></i></a>
+          </div>
+        </div>
+        <div class="product-content">
+          <span>Chair</span>
+          <h4><a href="product-details.html">Golden Easy Spot Chair.</a></h4>
+          <div class="price-addtocart">
+            <div class="product-price">
+              <span>$210.00</span>
+              <span class="old">$230.00</span>
+            </div>
+            <div class="product-addtocart">
+              <a title="Add To Cart" href="#">+ Add To Cart</a>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>
+{% endif %} {% endblock %}

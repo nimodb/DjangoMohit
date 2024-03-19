@@ -1,0 +1,305 @@
+{% extends 'base.html' %} {% load static %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}Puppies For Sale{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- !Content -->
+{% block content %}
+<div class="shop-area pt-90 pb-90">
+    <div class="container">
+        <div class="row flex-row-reverse">
+            <!-- Filter -->
+            <div class="col-lg-3">
+                <div class="sidebar-wrapper">
+                    <form>
+                    {% csrf_token %}
+                    <!-- search breed -->
+                        <div class="sidebar-widget">
+                            <h4 class="sidebar-title">Search</h4>
+                            <div class="sidebar-search mb-40 mt-20">
+                                    <input 
+                                        name="search_breed"
+                                        class="form-control"
+                                        list="breedsDatalistOptions"
+                                        placeholder="Search breed..."
+                                        hx-post="{% url 'store:search_by_breeds' %}"
+                                        hx-target="#result"
+                                        hx-trigger="keyup changed delay:500ms"
+                                    >
+                                    <datalist id="breedsDatalistOptions">
+                                        {% for breed in breeds %}
+                                            <option value="{{breed}}"></option>
+                                        {% endfor %}
+                                    </datalist>
+                            </div>
+                        </div>
+                        <!-- Gender -->
+                        <div class="sidebar-widget pb-40">
+                            <h4 class="sidebar-title">Gender </h4>
+                            <div class="sidebar-widget-list mt-20">
+                                    <ul>
+                                        <li>
+                                            <div class="sidebar-widget-list-left">
+                                                <input
+                                                    checked
+                                                    name="gender_f"
+                                                    type="checkbox"
+                                                    hx-post="{% url 'store:search_by_breeds' %}"
+                                                    hx-target="#result"
+                                                    hx-trigger="click delay:500ms"
+                                                    >
+                                                <a >Female <span><i class="fa-solid fa-venus"></i></span> </a>
+                                                <span class="checkmark"></span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="sidebar-widget-list-left">
+                                                <input
+                                                    checked
+                                                    name="gender_m"
+                                                    type="checkbox"
+                                                    hx-post="{% url 'store:search_by_breeds' %}"
+                                                    hx-target="#result"
+                                                    hx-trigger="click delay:500ms">
+                                                <a>Male <span><i class="fa-solid fa-mars"></i></span></a>
+                                                <span class="checkmark"></span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                            </div>
+                        </div>
+                        <!-- Price range -->
+                        <div class="sidebar-widget">
+                            <h4 class="sidebar-title">Price Filter</h4>
+                            <div class="sidebar-search mb-40 mt-20">
+                                    <label for="min_price">Min Price:</label>
+                                        <input 
+                                            type="number"
+                                            name="min_price"
+                                            id="min_price"
+                                            class="form-control"
+                                            placeholder="Enter min price $"
+                                            hx-post="{% url 'store:search_by_breeds' %}"
+                                            hx-target="#result"
+                                            hx-trigger="keyup changed delay:500ms"
+                                        >
+                                        <br>
+                                        <label for="max_price">Max Price:</label>
+                                        <input 
+                                            type="number"
+                                            name="max_price"
+                                            id="max_price"
+                                            class="form-control"
+                                            placeholder="Enter max price $"
+                                            hx-post="{% url 'store:search_by_breeds' %}"
+                                            hx-target="#result"
+                                            hx-trigger="keyup changed delay:500ms"
+                                        >
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Context -->
+            <div class="col-lg-9" id="result">
+                <div class="shop-topbar-wrapper">
+                    <div class="shop-topbar-left">
+                        <div class="view-mode nav">
+                        </div>
+                        <p>Showing {{ products.start_index }} - {{ products.end_index }} of {{ products.paginator.count }} results</p>
+                    </div>
+                </div>
+                <div class="shop-bottom-area">
+                    <div class="tab-content jump">
+                        <div id="shop-2" class="tab-pane active">
+                            {% for product in products %}
+                            <div class="shop-list-wrap mb-30">
+                                <div class="row">
+                                    <div class="col-xl-4 col-lg-5 col-md-6 col-sm-6">
+                                        <div class="product-wrap mb-35">
+                                            <div class="product-img mb-15">
+                                                <a href="{% url 'store:product' product.id %}">
+                                                    {% if product.photos.first.first_photo %}
+                                                        <img
+                                                        src="{{product.photos.first.first_photo.url}}"
+                                                        alt="{{product.name}}"
+                                                        class="rounded"
+                                                        />
+                                                    {% else %}
+                                                        <img
+                                                        src="{% static 'assets/images/product/pro-hm1-5.jpg' %}"
+                                                        alt="{{product.name}}"
+                                                        class="rounded"/>
+                                                    {% endif %}
+                                                </a>
+                                                {% if product.product_last_day %}
+                                                <span class="price-dec font-dec">NEW</span>
+                                                {% endif %}
+                                                {% if product.cal_price == 0 %}
+                                                <span class="price-dec">Free</span>
+                                                {% elif product.pct_price != 0 %}
+                                                <span class="price-dec">-{{product.pct_price}}%</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-8 col-lg-7 col-md-6 col-sm-6">
+                                        <div class="shop-list-content">
+                                            <!-- Reviews -->
+                                            <span>
+                                                {% if product.reviews.all %}
+                                                <small>
+                                                    <div class="product-ratting">
+                                                        {{product.average_rating.0|safe}}
+                                                        <small>{{product.average_rating.1}}</small>
+                                                    </div>
+                                                </small>
+                                                {% else %}
+                                                <small>No reviews yet.</small>
+                                                {% endif %}
+                                            </span>
+                                            <!-- Breed and Group -->
+                                            <h5>
+                                                <small>Breed:</small>
+                                                <a href="product-details.html">{{product.breed}}</a>
+                                                <a href="product-details.html"><small>({{product.group}})</small></a>
+                                            </h5>
+                                            <!-- Gender -->
+                                            <h5>
+                                                <small>Gender:</small>
+                                                {% if product.male_inventory %}
+                                                Male : {{product.male_inventory}}
+                                                {% endif %}
+                                                {% if product.female_inventory %}
+                                                Female : {{product.female_inventory}}
+                                                {% endif %}
+                                            </h5>
+                                            <!-- Age -->
+                                            <h5>
+                                                <small>Age:</small>
+                                                {{ product.get_age }} old
+                                            </h5>
+                                            <!-- Location -->
+                                            <h5>
+                                                <small>
+                                                    <i class="fa-solid fa-location-dot"></i>
+                                                </small>
+                                                {{product.creator.profile.country}}, {{product.creator.profile.state}}, {{product.creator.profile.district}}, {{product.creator.profile.city}}
+                                            </h5>
+                                            <!-- Price -->
+                                            <div class="pro-list-price">
+                                                {% if product.cal_price == 0 %}
+                                                    <span class="text-danger"><i class="fa-solid fa-fire-flame-curved"></i> Free</span>
+                                                {% else %}
+                                                    <span >{{product.cal_price}}</span>
+                                                    {% if product.format_price != product.cal_price %}
+                                                    <span class="old text-danger" style="text-decoration: line-through" ><small>{{ product.format_price}}</small></span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                            <!-- Summary -->
+                                            <p>{{product.summary}}</p>
+                                            <!-- Contact and see more -->
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="product-list-action">
+                                                        <form> {% csrf_token %}
+                                                        <a title="Call" href="tel:{{product.creator.profile.phone}}"><small><i class="fa-solid fa-phone"></i></small></a>
+                                                        <a title="E-mail" href="mailto:{{product.creator.email}}"><small><i class="fa-solid fa-envelope"></i></small></a>
+                                                        {% if product.id in wishlist %}
+                                                        <i class="fa-solid fa-heart-circle-check text-danger"></i>
+                                                        {% else %}
+                                                        <a 
+                                                            title="Add to Favorite"
+                                                            href="#"
+                                                            id="favorite_toggle_{{ product.id }}"
+                                                            hx-post="{% url 'members:add_to_wishlist' product.id %}"
+                                                            hx-target="#favorite_toggle_{{ product.id }}"
+                                                            hx-swap="outerHTML"
+                                                            hx-trigger="click"
+                                                        >
+                                                            <small>
+                                                                <i class='fa-solid fa-heart'></i>
+                                                            </small>
+                                                        </a>
+                                                        {% endif %}
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto pt-10">
+                                                    <a title="See More" href="{% url 'store:product' product.id %}">
+                                                        <i class="fa-solid fa-paw"></i>  See more
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if products.has_other_pages %}
+                            <div class="pagination-style text-center">
+                            <ul>
+                                {% if products.has_previous %}
+                                <li>
+                                    <a 
+                                        class="prev" href="#"
+                                        hx-get="{% url 'store:search_by_breeds' %}?page={{ products.previous_page_number }}"
+                                        hx-target="#result"
+                                    >
+                                        <i class="la la-angle-left"></i>
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li><span class="disabled"><i class="la la-angle-left"></i></span></li>
+                                {% endif %}
+                
+                                {% for page_num in products.paginator.page_range %}
+                                    {% if products.number == page_num %}
+                                        <li><a class="active" href="#">{{ page_num }}</a></li>
+                                    {% else %}
+                                        <li>
+                                            <a 
+                                                href="#"
+                                                hx-get="{% url 'store:search_by_breeds' %}?page={{ page_num }}"
+                                                hx-target="#result"
+                                            >
+                                                {{ page_num }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if products.has_next %}
+                                    <li>
+                                        <a 
+                                            class="next" 
+                                            hx-get="{% url 'store:search_by_breeds' %}?page={{ products.next_page_number }}"
+                                            hx-target="#result"
+                                        >
+                                            <i class="la la-angle-right"></i>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li><span class="disabled"><i class="la la-angle-right"></i></span></li>
+                                {% endif %}
+                            </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

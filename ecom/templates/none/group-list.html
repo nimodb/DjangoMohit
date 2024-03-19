@@ -1,0 +1,163 @@
+{% extends 'base.html' %} {% load static %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}All Groups{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- !Content -->
+{% block content %}
+<div class="shop-area pt-90 pb-90">
+  <div class="container">
+    <div class="row flex-row-reverse">
+      <div class="col-lg-3">
+        <div class="sidebar-wrapper">
+          <div class="sidebar-widget">
+            <h4 class="sidebar-title">Search</h4>
+            <div class="sidebar-search mb-40 mt-20">
+              <form class="sidebar-search-form" method="get" action="{% url 'store:groups' %}">
+                {% if query %}
+                <input type="text" value="{{query}}" placeholder="Search here..." name="query"/>
+                {% else %}
+                <input type="text" placeholder="Search here..." name="query"/>
+                {% endif %}
+                <button>
+                  <i class="la la-search"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+          <div class="sidebar-widget shop-sidebar-border pt-40">
+            <h4 class="sidebar-title">Group</h4>
+            <div class="shop-catigory mt-20">
+              {% for group in groups_sidebar %}
+              <li><a href="{% url 'store:group_detail' slug=group.slug %}">{{group.name}}</a></li>
+              {% endfor %}
+              <ul id="faq">
+                {% for group_name, data in navigation_bar.items %}
+                {% if data.breeds %}
+                <li> 
+                  <a data-bs-toggle="collapse" href="#group-{{ data.group_slug }}">{{ group_name }}
+                    <i class="la la-angle-down"></i>
+                  </a>
+                  <ul id="group-{{ data.group_slug }}" class="panel-collapse collapse" data-bs-parent="#faq">
+                    {% for breed in data.breeds %}
+                    <li><a href="{% url 'store:breed_detail' breed.slug %}">{{ breed.name }}</a></li>
+                    {% endfor %}
+                    <li><a href="{% url 'store:group_detail' data.group_slug %}">See All <small>( +{{ data.breeds_count }})</small></a></li>
+                  </ul>
+                </li>
+                {% else %}
+                <li> <a href="{% url 'store:group_detail' data.group_slug %}">{{ group_name }}</a></li>
+                {% endif %}
+              {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="shop-topbar-wrapper">
+          <div class="shop-topbar-left">
+            <!-- <div class="view-mode nav">
+              <a href="#shop-1" data-bs-toggle="tab"
+                ><i class="la la-th"></i
+              ></a>
+              <a class="active" href="#shop-2" data-bs-toggle="tab"
+                ><i class="la la-list-ul"></i
+              ></a>
+            </div> -->
+            <p>Showing {{ groups.start_index }} - {{ groups.end_index }} of {{ groups.paginator.count }} results</p>
+          </div>
+        </div>
+        <div class="shop-bottom-area">
+          <div class="tab-content jump">
+            <div id="shop-2" class="tab-pane active">
+              {% for group in groups %}
+              <div class="shop-list-wrap mb-30">
+                <div class="row">
+                  <div class="col-xl-4 col-lg-5 col-md-6 col-sm-6">
+                    <div class="product-list-img">
+                        <a href="{% url 'store:group_detail' slug=group.slug %}">
+                            {% if group.image %}
+                            <img src="{{group.image.url}}" alt="{{group.name}}" />
+                            {% else %}
+                            <img
+                              src="{% static 'assets/images/product/pro-hm1-1.jpg' %}"
+                              alt="{{group.name}}"
+                            />
+                            {% endif %}
+                      <div class="">
+                        <a
+                          
+                          ></a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-xl-8 col-lg-7 col-md-6 col-sm-6">
+                    <div class="shop-list-content">
+                      <!-- <span>Chair</span> -->
+                      <h4>
+                        <a href="{% url 'store:group_detail' slug=group.slug %}"
+                          >{{group.name}}</a
+                        >
+                      </h4>
+                      <p>
+                        {{group.description|slice:":550"}}...
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            {% if groups.has_other_pages %}
+            <div class="pagination-style text-center">
+              <ul>
+                {% if groups.has_previous %}
+                  {% if query %}
+                  <li><a class="prev" href="?query={{ query|urlencode }}&page={{ groups.previous_page_number }}"><i class="la la-angle-left"></i></a></li>
+                  {% else %}
+                  <li><a class="prev" href="?page={{ groups.previous_page_number }}"><i class="la la-angle-left"></i></a></li>
+                  {% endif %}
+                {% else %}
+                  <li><span class="disabled"><i class="la la-angle-left"></i></span></li>
+                {% endif %}
+
+                {% for page_num in groups.paginator.page_range %}
+                  {% if groups.number == page_num %}
+                    <li><a class="active" href="#">{{ page_num }}</a></li>
+                  {% else %}
+                    {% if query %}
+                    <li><a href="?query={{ query|urlencode }}&page={{ page_num }}">{{ page_num }}</a></li>
+                    {% else %}
+                    <li><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+                    {% endif %}
+                  {% endif %}
+                  {% endfor %}
+                  {% if groups.has_next %}
+                    {% if query %}
+                    <li><a class="next" href="?query={{ query|urlencode }}&page={{ groups.next_page_number }}"><i class="la la-angle-right"></i></a></li>
+                    {% else %}
+                    <li><a class="next" href="?page={{ groups.next_page_number }}"><i class="la la-angle-right"></i></a></li>
+                    {% endif %}
+                {% else %}
+                  <li><span class="disabled"><i class="la la-angle-right"></i></span></li>
+                {% endif %}
+              </ul>
+          </div>
+          {% endif %}
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+{% endblock %}

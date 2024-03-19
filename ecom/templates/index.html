@@ -1,0 +1,228 @@
+{% extends 'base.html' %} {% load static %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}Home{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- !Content -->
+{% block content %}
+<!-- Best Sell -->
+<div class="product-area pb-135 pt-100">
+  <div class="container">
+    <div class="section-title text-center mb-40">
+      <h2>Best Dog Sales</h2>
+      <p>
+        Discover our finest selection of top-selling dog breeds.Whether you're looking for a loyal companion or a playful friend, we have the perfect furry match for you!
+      </p>
+    </div>
+    <div class="product-slider-active owl-carousel">
+      {% for top_discount in top_discounts %}
+      <div class="product-wrap">
+        <div class="product-img mb-15">
+          <a href="{% url 'store:product' top_discount.id %}">
+          {% if top_discount.photos.first.first_photo %}
+            <img
+              src="{{top_discount.photos.first.first_photo.url}}"
+              alt="{{top_discount.name}}"
+              class="rounded"
+              />
+          </a>
+          {% else %}
+            <img
+              src="{% static 'assets/images/product/pro-hm1-5.jpg' %}"
+              alt="{{top_discount.name}}"
+              class="rounded"/>
+          </a>
+          {% endif %}
+          {% if top_discount.product_last_day %}
+            <span class="price-dec font-dec">NEW</span>
+          {% endif %}
+          {% if top_discount.cal_price == 0 %}
+            <span class="price-dec">Free</span>
+          {% elif top_discount.pct_price != 0 %}
+            <span class="price-dec">-{{top_discount.pct_price}}</span>
+          {% endif %}
+        </div>
+        <div class="product-content">
+          <span>
+            <a href="{% url 'store:group_detail' slug=top_discount.group.slug %}"> {{top_discount.group}}</a>,
+            <a href="{% url 'store:group_detail' slug=top_discount.group.slug %}">{{top_discount.breed}}</a>
+          </span>
+          <h4>
+            <a href="{% url 'store:product' top_discount.id %}">{{top_discount.name}}</a>
+          </h4>
+          <span>
+            {% if top_discount.gender == "F" %}
+              <i class="fa-solid fa-venus"></i>
+            {% elif top_discount.gender == "M" %}
+              <i class="fa-solid fa-mars"></i>
+            {% elif top_discount.gender == "N" %}
+              <i class="fa-solid fa-genderless"></i>
+            {% endif %}
+            {{top_discount.get_gender_display}}
+          </span>
+          <span>
+            <i class="fa-solid fa-location-dot"></i>
+           {{top_discount.creator.profile.country}}, {{top_discount.creator.profile.city}}
+          </span>
+          <div class="price-addtocart">
+            <div class="product-price">
+              {% if top_discount.cal_price == 0 %}
+              <span style="color: #ff5151;"><i class="fa-solid fa-fire-flame-curved"></i> Free</span>
+              {% else %}
+                <span >{{top_discount.cal_price}}</span>
+                {% if top_discount.format_price != top_discount.cal_price %}
+                  <span class="old" >{{ top_discount.format_price}}</span>
+                {% endif %}
+              {% endif %}
+            </div>
+            <div class="product-addtocart">
+              <a title="See More" href="{% url 'store:product' top_discount.id %}">
+                <i class="fa-solid fa-paw"></i>  See more
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<!-- Discount -->
+{% if top_discounts.0 %}
+<div class="discount-area pb-100">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-7 col-md-6">
+        <div class="discount-img">
+          <a href="{% url 'store:product' top_discounts.0.id %}">
+            {% if top_discounts.0.photos.first.first_photo %}
+              <img
+                src="{{top_discounts.0.photos.first.first_photo.url}}"
+                alt="{{top_discounts.0.name}}"/>
+            {% else %}
+              <img
+                src="{% static 'assets/images/product/pro-hm1-5.jpg' %}"
+                alt="{{top_discounts.0.name}}"
+              />
+            {% endif %}
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-5 col-md-6">
+        <div class="discount-content">
+          <p>
+            Looking for the best deals on your furry friend? At DogStore, we offer the highest quality dogs at unbeatable prices.
+            <br />
+            Whether you're searching for a playful pup or a loyal companion, we've got you covered.
+          </p>
+          <h2>Best Price Guaranteed <br /><strong style="color: #ff5151;">Up to {{top_discounts.0.pct_price}}%</strong></h2>
+          <p class="bright-color">Don't miss out on our exclusive offers! Find your perfect match today and experience the joy of dog ownership without breaking the bank.</p>
+          <div class="discount-btn default-btn btn-hover">
+            <a
+              class="btn-color-theme btn-size-md btn-style-outline"
+              href="{% url 'store:product' top_discounts.0.id %}"
+              >Buy Now!
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<!-- All Products -->
+<div class="product-area pb-60">
+  <div class="container">
+    <div class="section-title text-center mb-40">
+      <h2>All Products</h2>
+      <p>
+        Lorem Ipsum is simply dummy text of the printing and typesetting
+        industry. Lorem Ipsum has been the industry's standard dummy text
+      </p>
+    </div>
+    <div class="row">
+      {% for product in products %}
+      <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+        <div class="product-wrap mb-35">
+          <div class="product-img mb-15">
+            <a href="{% url 'store:product' product.id %}">
+            {% if product.photos.first.first_photo %}
+              <img
+                src="{{product.photos.first.first_photo.url}}"
+                alt="{{product.name}}"
+                class="rounded"
+                />
+            {% else %}
+              <img
+                src="{% static 'assets/images/product/pro-hm1-5.jpg' %}"
+                alt="{{product.name}}"
+                class="rounded"/>
+            {% endif %}
+            </a>
+            {% if product.product_last_day %}
+            <span class="price-dec font-dec">NEW</span>
+            {% endif %}
+            {% if product.cal_price == 0 %}
+              <span class="price-dec">Free</span>
+            {% elif product.pct_price != 0 %}
+              <span class="price-dec">-{{product.pct_price}}%</span>
+            {% endif %}
+          </div>
+          <div class="product-content">
+            <span>
+              <a href="{% url 'store:group_detail' slug=product.group.slug %}"> {{product.group}}</a>,
+              <a href="{% url 'store:group_detail' slug=product.group.slug %}">{{product.breed}}</a>
+            </span>
+            <h4>
+              <a href="{% url 'store:product' product.id %}">{{product.name}}</a>
+            </h4>
+            <span>
+              {% if product.gender == "F" %}
+                <i class="fa-solid fa-venus"></i>
+              {% elif product.gender == "M" %}
+                <i class="fa-solid fa-mars"></i>
+              {% elif product.gender == "N" %}
+                <i class="fa-solid fa-genderless"></i>
+              {% endif %}
+              {{product.get_gender_display}}
+            </span>
+            <span>
+              <i class="fa-solid fa-location-dot"></i>
+             {{product.creator.profile.country}}, {{product.creator.profile.city}}
+            </span>
+            <div class="price-addtocart">
+              <div class="product-price">
+                {% if product.cal_price == 0 %}
+                <span style="color: #ff5151;"><i class="fa-solid fa-fire-flame-curved"></i> Free</span>
+                {% else %}
+                  <span >{{product.cal_price}}</span>
+                  {% if product.format_price != product.cal_price %}
+                    <span class="old" >{{ product.format_price}}</span>
+                  {% endif %}
+                {% endif %}
+              </div>
+              <div class="product-addtocart">
+                <a title="See More" href="{% url 'store:product' product.id %}">
+                  <i class="fa-solid fa-paw"></i>  See more
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="section-title text-center mb-40">
+      <a href="{% url 'store:search_puppies' %}">See all <i class="fa-solid fa-angle-right"></i></a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
