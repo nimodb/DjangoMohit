@@ -36,52 +36,59 @@ def convert_to_readable_time(data):
     return data
 
 
-def login_register_user(request):
+def login_user(request):
     if request.user.is_authenticated:
         return redirect("members:dashboard")
 
-    login_form = LoginForm()
-    registration_form = RegistrationForm()
     context = create_context(request)
+    login_form = LoginForm()
 
     if request.method == "POST":
-        if "login" in request.POST:
-            login_form = LoginForm(request.POST)
-            if login_form.is_valid():
-                username = login_form.cleaned_data.get("username")
-                password = login_form.cleaned_data.get("password")
-                user = authenticate(username=username, password=password)
-                if user:
-                    login(request, user)
-                    messages.success(request, "You have been successfully logged in.")
-                    return redirect("members:dashboard")
-                else:
-                    login_form.add_error(None, "Invalid username or password")
+        login_form = LoginForm(request.POST)
+        if login_form.is_valid():
+            username = login_form.cleaned_data.get("username")
+            password = login_form.cleaned_data.get("password")
+            user = authenticate(username=username, password=password)
+            if user:
+                login(request, user)
+                messages.success(request, "You have been successfully logged in.")
+                return redirect("members:dashboard")
             else:
-                for error in list(login_form.errors.values()):
-                    messages.error(request, error)
-
-        elif "register" in request.POST:
-            registration_form = RegistrationForm(request.POST)
-            if registration_form.is_valid():
-                username = registration_form.cleaned_data.get("username")
-                if User.objects.filter(username=username).exists():
-                    registration_form.add_error(
-                        "username", "Username is already taken."
-                    )
-                else:
-                    registration_form.save()
-                    password = registration_form.cleaned_data.get("password1")
-                    user = authenticate(username=username, password=password)
-                    login(request, user)
-                    return redirect("members:login_register")
-            else:
-                for error in list(registration_form.errors.values()):
-                    messages.error(request, error)
+                messages.warning(request, "Invalid username or password.")
+        else:
+            for error in list(login_form.errors.values()):
+                messages.warning(request, error)
 
     context["login_form"] = login_form
+    return render(request, "members/login.html", context=context)
+
+
+def register_user(request):
+    if request.user.is_authenticated:
+        return redirect("members:dashboard")
+    context = create_context(request)
+    registration_form = RegistrationForm()
+
+    if request.method == "POST":
+        registration_form = RegistrationForm(request.POST)
+        if registration_form.is_valid():
+            username = registration_form.cleaned_data.get("username")
+            if User.objects.filter(username=username).exists():
+                registration_form.add_error("username", "Username is already taken.")
+            else:
+                registration_form.save()
+                password = registration_form.cleaned_data.get("password1")
+                user = authenticate(username=username, password=password)
+                login(request, user)
+                messages.success(request, "Success! Your registration is complete.")
+                return redirect("members:dashboard")
+
+        else:
+            for error in list(registration_form.errors.values()):
+                messages.warning(request, error)
+
     context["registration_form"] = registration_form
-    return render(request, "members/login-register.html", context=context)
+    return render(request, "members/register.html", context=context)
 
 
 def profile_has_changed(profile, old_profile_data):
@@ -112,7 +119,7 @@ def submit_reply(request, pk):
 
 def list_posts(request):
     if not request.user.is_authenticated:
-        return redirect("members:login_register")
+        return redirect("members:login")
 
     if request.user.profile.verified != "V":
         messages.warning(
@@ -142,7 +149,7 @@ def list_posts(request):
 
 def account_details(request):
     if not request.user.is_authenticated:
-        return redirect("members:login_register")
+        return redirect("members:login")
 
     context = create_context(request)
     current_user = request.user
@@ -196,7 +203,7 @@ def account_details(request):
 
 def dashboard(request):
     if not request.user.is_authenticated:
-        return redirect("members:login_register")
+        return redirect("members:login")
 
     context = create_context(request)
     current_user = request.user
@@ -207,7 +214,7 @@ def dashboard(request):
 
 def wishlist(request):
     if not request.user.is_authenticated:
-        return redirect("members:login_register")
+        return redirect("members:login")
     context = create_context(request)
     wishlist = Wishlist.objects.filter(user=request.user).first()
     context["wishlist"] = wishlist
@@ -223,7 +230,7 @@ def add_to_wishlist(request, pk):
 
 def remove_from_wishlist(request, pk):
     if not request.user.is_authenticated:
-        return redirect("members:login_register")
+        return redirect("members:login")
     if request.user.profile.verified != "V":
         messages.warning(
             request,
@@ -243,7 +250,7 @@ def remove_from_wishlist(request, pk):
 
 def delete_post(request, pk):
     if not request.user.is_authenticated:
-        return redirect("members:login_register")
+        return redirect("members:login")
     if request.user.profile.verified != "V":
         messages.warning(
             request,
@@ -262,7 +269,7 @@ def delete_post(request, pk):
 
 def edit_post(request, pk):
     if not request.user.is_authenticated:
-        return redirect("members:login_register")
+        return redirect("members:login")
     if request.user.profile.verified != "V":
         messages.warning(
             request,
@@ -346,7 +353,7 @@ def edit_post(request, pk):
 
 def add_post(request):
     if not request.user.is_authenticated:
-        return redirect("members:login_register")
+        return redirect("members:login")
     if request.user.profile.verified != "V":
         messages.warning(
             request,
@@ -395,7 +402,7 @@ def add_post(request):
 
 def update_password(request):
     if not request.user.is_authenticated:
-        return redirect("members:login_register")
+        return redirect("members:login")
 
     current_user = request.user
     context = create_context(request)

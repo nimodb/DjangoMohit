@@ -25,9 +25,11 @@
                 <a href="{% url 'members:dashboard' %}"
                   ><i class="fa-solid fa-gauge"></i> Dashboard</a
                 >
+                {% if user.profile.verified == 'V' %}
                 <a href="{% url 'members:list_posts' %}"
                   ><i class="fa-solid fa-paw"></i> Posts</a
                 >
+                {% endif %}
                 <a href="#posts" class="active" data-bs-toggle="tab"
                   ><i class="fa-solid fa-heart"></i> My Favorite</a
                 >

@@ -1,0 +1,77 @@
+{% extends 'base.html' %} {% load static %}{% load widget_tweaks %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}Home{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- !Content -->
+{% block content %}
+<div class="login-register-area pt-85 pb-90">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-7 col-md-12 ms-auto me-auto">
+        <div class="login-register-wrapper">
+          <div class="login-register-tab-list nav">
+            <a class="active" data-bs-toggle="tab" href="#lg1">
+              <h4>login</h4>
+            </a>
+            <a href="{% url 'members:register' %}">
+              <h4>register</h4>
+            </a>
+          </div>
+          <div class="tab-content">
+            {% if messages %}
+                {% for msg in messages %}
+                <div class="alert alert-{{msg.tags}} alert-dismissible fade show" role="alert">
+                  {{msg}}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+              {% endif %}
+              <!-- Login -->
+            <div id="lg1" class="tab-pane active">
+              <div class="login-form-container">
+                <div class="login-register-form">
+                  <form
+                    method="POST"
+                    action="{% url 'members:login' %}"
+                    >
+                    {% csrf_token %}
+                    <!--  -->
+                    <label for="id_username">{{login_form.username.label}}:</label>
+                    <div class="text-danger mt-2" id="check-username-login"></div>
+                    {% render_field login_form.username hx-post="/my-account/check-username-login/" hx-target="#check-username-login" hx-trigger="keyup" %}
+                    <br>
+
+                    <label for="id_password">{{login_form.password.label}}</label>
+                    {{login_form.password}}
+                    {{login_form.password.help_text}}
+
+                    {{ login_form.as_p.errors }}
+                    <div class="button-box">
+                      <div class="login-toggle-btn">
+                        <input type="checkbox" />
+                        <label>Remember me</label>
+                        <a href="">Forgot Password?</a>
+                      </div>
+                      <button type="submit" name="login" value="1">
+                        Login
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

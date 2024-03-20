@@ -4,13 +4,15 @@ from members import views
 app_name = "members"
 
 urlpatterns = [
-    path("login_register/", views.login_register_user, name="login_register"),
+    path("login/", views.login_user, name="login"),
+    path("register/", views.register_user, name="register"),
+    path("update_password/", views.update_password, name="update_password"),
+    path("logout/", views.logout_user, name="logout"),
+    # account   
     path("dashboard/", views.dashboard, name="dashboard"),
     path("account-details/", views.account_details, name="account_details"),
     path("list_posts/", views.list_posts, name="list_posts"),
     path("submit-reply/<int:pk>", views.submit_reply, name="submit_reply"),
-    path("update_password/", views.update_password, name="update_password"),
-    path("logout/", views.logout_user, name="logout"),
     # Post process
     path("add/", views.add_post, name="add_post"),
     path("edit/<int:pk>/", views.edit_post, name="edit_post"),
