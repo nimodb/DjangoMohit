@@ -2,6 +2,7 @@ asgiref==3.7.2
 Babel==2.14.0
 Django==5.0.3
 django-ckeditor==6.7.1
+django-environ==0.11.2
 django-filter==24.1
 django-forms-dynamic==1.0.0
 django-js-asset==2.2.0
