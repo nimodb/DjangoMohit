@@ -29,9 +29,12 @@ class ProductAdmin(admin.ModelAdmin):
         else:
             final_price = obj.price * (1 - obj.pct_price / 100)
             custom_p = "${:,.2f}".format(final_price)
-            return format_html(
-                f"<span><b>{custom_p}</b> <s>${obj.price}</s> (<small>%{obj.pct_price}</small>)</span>"
-            )
+            if obj.pct_price != 0:
+                return format_html(
+                    f"<span><b>{custom_p}</b> <s>${obj.price}</s> (<small>%{obj.pct_price}</small>)</span>"
+                )
+            else:
+                return format_html(f"<span><b>{custom_p}</b></span>")
 
     def custom_status(self, obj):
         if obj.status == "P":
