@@ -213,7 +213,7 @@ class Product(models.Model):
                 else None
             )
             image_urls.append(image_data)
-        
+
         media_group = []
         for media in image_urls:
             for key, value in media.items():
@@ -415,7 +415,7 @@ class Review(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.user.username}'s review for {self.product.name}"
+        return f"{self.user.username}'s review"
 
 
 class Reply(models.Model):
