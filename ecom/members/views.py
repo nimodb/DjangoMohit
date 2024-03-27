@@ -11,7 +11,8 @@ from django.contrib.auth import (
     update_session_auth_hash,
     get_user_model,
 )
-from django.contrib.auth.models import User
+
+# from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from members.forms import (
     LoginForm,
@@ -22,8 +23,8 @@ from members.forms import (
     ProductPhotoForm,
     ProductVideoForm,
 )
-from members.models import Profile, Review, Wishlist
-from store.models import Product, ProductPhoto, ProductVideo
+from members.models import Profile
+from store.models import Product, ProductPhoto, ProductVideo, Wishlist, Review
 from store.views import create_context
 from store.forms import ReviewForm, ReplyForm
 
@@ -73,7 +74,7 @@ def register_user(request):
         registration_form = RegistrationForm(request.POST)
         if registration_form.is_valid():
             username = registration_form.cleaned_data.get("username")
-            if User.objects.filter(username=username).exists():
+            if get_user_model().objects.filter(username=username).exists():
                 registration_form.add_error("username", "Username is already taken.")
             else:
                 registration_form.save()
@@ -121,7 +122,7 @@ def list_posts(request):
     if not request.user.is_authenticated:
         return redirect("members:login")
 
-    if request.user.profile.verified != "V":
+    if request.user.verified != "V":
         messages.warning(
             request,
             "Your profile is pending verification (Please wait for our team to review it.)",
@@ -150,31 +151,33 @@ def list_posts(request):
 def account_details(request):
     if not request.user.is_authenticated:
         return redirect("members:login")
-
-    context = create_context(request)
-    current_user = request.user
-    profile = Profile.objects.get(user__id=current_user.id)
-    user_data_before = model_to_dict(current_user)
-    profile_data_before = model_to_dict(profile)
+    fields = [
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "phone",
+        "country",
+        "state",
+        "district",
+        "city",
+        "verified",
+    ]
+    user_data_before = model_to_dict(request.user, fields=fields)
     if request.method == "POST":
-        user_form = UpdateUserForm(request.POST, instance=current_user)
-        profile_form = InfoUserForm(request.POST, instance=profile)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
+        form = InfoUserForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
 
-            user_data_after = model_to_dict(current_user)
-            profile_data_after = model_to_dict(profile)
+            user_data_after = model_to_dict(request.user, fields=fields)
 
             user_changed = user_data_before != user_data_after
-            profile_changed = profile_data_before != profile_data_after
-            if user_changed or profile_changed:
+            if user_changed:
                 empty_info = any(
-                    value == "" or value == None
-                    for value in profile_data_after.values()
+                    value == "" or value == None for value in user_data_after.values()
                 )
-                profile.verified = "I" if empty_info else "P"
-                profile.save(update_fields=["verified"])
+                request.user.verified = "I" if empty_info else "P"
+                request.user.save(update_fields=["verified"])
 
                 message = (
                     "Please ensure all required fields are filled out before saving changes."
@@ -188,16 +191,14 @@ def account_details(request):
             else:
                 messages.info(request, "No changes detected.")
             return redirect("members:account_details")
+        else:
+            for error in list(form.errors.values()):
+                messages.warning(request, error)
+            return redirect("members:account_details")
     else:
-        user_form = UpdateUserForm(instance=current_user)
-        profile_form = InfoUserForm(instance=profile)
-
-    context.update(
-        {
-            "user_form": user_form,
-            "profile_form": profile_form,
-        }
-    )
+        form = InfoUserForm(instance=request.user)
+    context = create_context(request)
+    context["form"] = form
     return render(request, "members/account-details.html", context)
 
 
@@ -231,7 +232,7 @@ def add_to_wishlist(request, pk):
 def remove_from_wishlist(request, pk):
     if not request.user.is_authenticated:
         return redirect("members:login")
-    if request.user.profile.verified != "V":
+    if request.user.verified != "V":
         messages.warning(
             request,
             "Your profile is pending verification (Please wait for our team to review it.)",
@@ -251,7 +252,7 @@ def remove_from_wishlist(request, pk):
 def delete_post(request, pk):
     if not request.user.is_authenticated:
         return redirect("members:login")
-    if request.user.profile.verified != "V":
+    if request.user.verified != "V":
         messages.warning(
             request,
             "Your profile is pending verification (Please wait for our team to review it.)",
@@ -260,6 +261,7 @@ def delete_post(request, pk):
 
     if request.method == "POST":
         product = get_object_or_404(Product, pk=pk)
+        print(product)
         product.delete()
         messages.success(request, "Your Post have been Deleted.")
         return redirect("members:list_posts")
@@ -270,14 +272,13 @@ def delete_post(request, pk):
 def edit_post(request, pk):
     if not request.user.is_authenticated:
         return redirect("members:login")
-    if request.user.profile.verified != "V":
+    if request.user.verified != "V":
         messages.warning(
             request,
             "Your profile is pending verification (Please wait for our team to review it.)",
         )
         return redirect("members:dashboard")
 
-    context = create_context(request)
     product = get_object_or_404(Product, pk=pk)
     photo_instance = get_object_or_404(ProductPhoto, product=product)
     video_instance = get_object_or_404(ProductVideo, product=product)
@@ -339,7 +340,7 @@ def edit_post(request, pk):
         product_form = ProductForm(instance=product)
         photo_form = ProductPhotoForm(instance=photo_instance)
         video_form = ProductVideoForm(instance=video_instance)
-
+    context = create_context(request)
     context.update(
         {
             "product": product,
@@ -354,7 +355,7 @@ def edit_post(request, pk):
 def add_post(request):
     if not request.user.is_authenticated:
         return redirect("members:login")
-    if request.user.profile.verified != "V":
+    if request.user.verified != "V":
         messages.warning(
             request,
             "Your profile is pending verification (Please wait for our team to review it.)",

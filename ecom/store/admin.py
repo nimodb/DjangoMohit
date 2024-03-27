@@ -4,15 +4,6 @@ from store.models import *
 
 
 # Register your models here.
-
-
-@admin.register(Breed)
-class BreedAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "group")
-    readonly_fields = ("slug",)
-    search_fields = ("name",)
-
-
 @admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "breeds_count")
@@ -33,6 +24,13 @@ class GroupAdmin(admin.ModelAdmin):
         )
 
 
+@admin.register(Breed)
+class BreedAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "group")
+    readonly_fields = ("slug",)
+    search_fields = ("name",)
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ("id", "breed", "creator", "status")
@@ -43,3 +41,19 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(ProductPhoto)
 class ProductPhotoAdmin(admin.ModelAdmin):
     list_display = ("id", "product")
+
+
+@admin.register(Contact)
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ("name", "email", "subject", "status", "created_at")
+    list_filter = ("status",)
+
+
+@admin.register(Reply)
+class ReplyAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "review")
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ("id", "user", "rating")

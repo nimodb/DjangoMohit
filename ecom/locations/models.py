@@ -31,7 +31,7 @@ class District(models.Model):
         ordering = ["state", "name"]
 
     name = models.CharField(max_length=100, unique=True)
-    state = models.ForeignKey(State, on_delete=models.CASCADE)
+    state = models.ForeignKey(State, on_delete=models.CASCADE, related_name="districts")
 
     def __str__(self):
         return self.name
@@ -43,7 +43,9 @@ class City(models.Model):
         ordering = ["district", "name"]
 
     name = models.CharField(max_length=100, unique=True)
-    district = models.ForeignKey(District, on_delete=models.CASCADE)
+    district = models.ForeignKey(
+        District, on_delete=models.CASCADE, related_name="cities"
+    )
 
     def __str__(self):
         return self.name

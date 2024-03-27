@@ -4,8 +4,7 @@ from django.db.models import Q, Min, Max
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from store.models import *
 from store.filters import ProductFilter
-from store.forms import ReviewForm, ReplyForm
-from members.models import Review, Wishlist
+from store.forms import ReviewForm, ReplyForm, ContactForm, SubscribeForm
 
 
 # Create your views here.
@@ -34,7 +33,6 @@ def navigation_bar_group():
 
 
 def create_context(request):
-    groups_navbar = navigation_bar_group()
     current_year = datetime.now().year
     favorites_count = 0
     if request.user.is_authenticated:
@@ -42,7 +40,6 @@ def create_context(request):
         if wishlist:
             favorites_count = wishlist.products.count()
     context = {
-        "groups_navbar": groups_navbar,
         "favorite_count": favorites_count,
         "current_year": current_year,
     }
@@ -62,8 +59,21 @@ def home(request):
 
 
 def contact(request):
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.save()
+            messages.success(request, "Your message has been sent successfully!")
+            return redirect("store:contact")
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request, error)
+    else:
+        form = ContactForm()
     context = create_context(request)
-    return render(request, "contact.html", context)
+    context["form"] = form
+    return render(request, "store/contact.html", context)
 
 
 def search(request):
@@ -308,6 +318,10 @@ def product(request, pk):
             is_owner = True if request.user == product.creator else False
             review_form = ReviewForm()
             reply_form = ReplyForm()
+            wishlist = Wishlist.objects.filter(user=request.user).first()
+            if wishlist:
+                wishlist_products_ids = list(wishlist.products.values_list("id", flat=True))
+                context["wishlist"] = wishlist_products_ids
             context["review_form"] = review_form
             context["reply_form"] = reply_form
             context["is_owner"] = is_owner

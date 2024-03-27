@@ -129,34 +129,50 @@
       <div class="col-lg-6 col-md-6">
         <div class="product-details-content pro-details-content-modify">
           <!-- Edit Post -->
-          {% if is_owner %}
           <p>
+            {% if is_owner %}
             {% if product.status == "P" %}
               <span class="badge text-bg-primary">{{product.get_status_display}}</span>
-              {% elif product.status == "RE" %}
+            {% elif product.status == "RE" %}
               <span class="badge text-bg-warning">{{product.get_status_display}}</span>
-              {% elif product.status == "A" %}
+            {% elif product.status == "A" %}
               <span class="badge text-bg-success">{{product.get_status_display}}</span>
-              {% elif product.status == "R" %}
+            {% elif product.status == "R" %}
               <span class="badge text-bg-danger">{{product.get_status_display}}</span>
             {% endif %}
             <small> - </small>
             <a href="{% url 'members:edit_post' product.id %}">
               <i class="fa-solid fa-pen-to-square"></i> Edit
             </a>
-            <small> - </small>
-            <a href="{% url 'members:delete_post' product.id %}">
-              <i class="fa-solid fa-trash"></i> Delete
+            {% endif %}
+            <!-- Wishlist -->
+            <form> {% csrf_token %}
+              {% if product.id in wishlist %}
+              <i class="fa-solid fa-heart-circle-check text-danger"></i>
+              {% else %}
+              <a 
+                title="Add to Favorite"
+                href="#"
+                id="favorite_toggle_{{ product.id }}"
+                hx-post="{% url 'members:add_to_wishlist' product.id %}"
+                hx-target="#favorite_toggle_{{ product.id }}"
+                hx-swap="outerHTML"
+                hx-trigger="click"
+            >
+            <button type="button" class="btn btn-outline-danger" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                <small>
+                    <i class='fa-solid fa-heart'></i>
+                </small>
+              </button>
             </a>
+            {% endif %}
+            </form>
           </p>
           <hr>
-          {% endif %}
           <!-- timesince -->
           <p>
             {{ product.timestamp|timesince }} ago
           </p>
-          <!-- name -->
-          <h2>{{product.name}}</h2>
           <!-- review -->
           <div class="product-ratting-review">
             {% if product.reviews.all %}
@@ -191,14 +207,12 @@
               <ul>
                 <li>
                   <a>
-                    {% if product.gender == "F" %}
-                      <i class="fa-solid fa-venus"></i>
-                    {% elif product.gender == "M" %}
-                      <i class="fa-solid fa-mars"></i>
-                    {% elif product.gender == "N" %}
-                      <i class="fa-solid fa-genderless"></i>
+                    {% if product.male_inventory %}
+                      <small><i class="fa-solid fa-venus"></i></small> Male: {{product.male_inventory}},
                     {% endif %}
-                    {{product.get_gender_display}}
+                    {% if product.female_inventory %}
+                      <small><i class="fa-solid fa-mars"></i></small> Female : {{product.female_inventory}}
+                    {% endif %}
                   </a>
                 </li>
               </ul>
@@ -211,7 +225,7 @@
               <ul>
                 <li>
                   <i class="fa-solid fa-calendar-days"></i>
-                  <a>{{ product.get_age}}</a>
+                  <a>{{ product.get_age}} old</a>
                   <small> ({{product.birthdate|date:"F j, Y"}})</small>
                 </li>
               </ul>
@@ -242,12 +256,12 @@
             <div class="pro-details-compare">
               <a title="Location" href="">
                 <i class="fa-solid fa-location-dot"></i>
-                {{product.creator.profile.country}}, {{product.creator.profile.city}}
+                {{product.creator.city}}, {{product.creator.country}}
               </a>
             </div>
             <div class="pro-details-compare">
-              <a title="Click to call" href="tell:{{product.creator.profile.phone}}">
-                <i class="fa-solid fa-phone"></i> {{product.creator.profile.phone}}
+              <a title="Click to call" href="tell:{{product.creator.phone}}">
+                <i class="fa-solid fa-phone"></i> {{product.creator.phone}}
               </a>
             </div>
             <div class="pro-details-compare">
@@ -290,10 +304,6 @@
                     <td>{{ product.timestamp|timesince }} ago</td>
                   </tr>
                   <tr>
-                    <td class="width1">Name</td>
-                    <td>{{product.name}}</td>
-                  </tr>
-                  <tr>
                     <td class="width1">Group</td>
                     <td>{{product.group}}</td>
                   </tr>
@@ -303,19 +313,26 @@
                   </tr>
                   <tr>
                     <td class="width1">Gender</td>
-                    <td>{{product.get_gender_display}}</td>
+                    <td>
+                      {% if product.male_inventory %}
+                        <small><i class="fa-solid fa-venus"></i></small> Male: {{product.male_inventory}},
+                      {% endif %}
+                      {% if product.female_inventory %}
+                        <small><i class="fa-solid fa-mars"></i></small> Female : {{product.female_inventory}}
+                      {% endif %}
+                    </td>
                   </tr>
                   <tr>
                     <td class="width1">Age</td>
-                    <td>{{ product.get_age}}<small> ({{product.birthdate|date:"F j, Y"}})</small></td>
+                    <td>{{ product.get_age}} old<small> ({{product.birthdate|date:"F j, Y"}})</small></td>
                   </tr>
                   <tr>
                     <td class="width1">Author</td>
-                    <td>{{product.creator.username}}<small> ({{product.creator.get_full_name}})</small></td>
+                    <td>{{product.creator.get_full_name}}<small> ({{product.creator.username}})</small></td>
                   </tr>
                   <tr>
                     <td class="width1">Location</td>
-                    <td>{{product.creator.profile.city}}, {{product.creator.profile.district}}, {{product.creator.profile.state}}, {{product.creator.profile.country}}</td>
+                    <td>{{product.creator.city}}, {{product.creator.district}}, {{product.creator.state}}, {{product.creator.country}}</td>
                   </tr>
                   <tr>
                     <td class="width1">E-mail</td>
@@ -328,8 +345,8 @@
                   <tr>
                     <td class="width1">Mobile</td>
                     <td>
-                      <a title="Click to call" href="tell:{{product.creator.profile.phone}}">
-                        {{product.creator.profile.phone}}
+                      <a title="Click to call" href="tell:{{product.creator.phone}}">
+                        {{product.creator.phone}}
                       </a>
                     </td>
                   </tr>
@@ -515,36 +532,56 @@
             {% endif %}
         </div>
         <div class="product-content">
+          <!-- Reviews -->
           <span>
+            {% if product.reviews.all %}
+            <small>
+                <div class="product-ratting">
+                    {{product.average_rating.0|safe}}
+                    <small>{{product.average_rating.1}}</small>
+                </div>
+            </small>
+            {% else %}
+            <small>No reviews yet.</small>
+            {% endif %}
+        </span>
+        <br>
+        <!-- Breed and Group -->
+          <span>
+            <small>Breed:</small>
             <a href="{% url 'store:group_detail' slug=product.group.slug %}"> {{product.group}}</a>,
             <a href="{% url 'store:group_detail' slug=product.group.slug %}">{{product.breed}}</a>
           </span>
           <br>
-          <h4>
-            <a href="{% url 'store:product' product.id %}">{{product.name}}</a>
-          </h4>
+          <!-- Gender -->
           <span>
-            {% if product.gender == "F" %}
-              <i class="fa-solid fa-venus"></i>
-            {% elif product.gender == "M" %}
-              <i class="fa-solid fa-mars"></i>
-            {% elif product.gender == "N" %}
-              <i class="fa-solid fa-genderless"></i>
+            <small>Gender:</small>
+            {% if product.male_inventory %}
+              <small><i class="fa-solid fa-venus"></i></small> Male : {{product.male_inventory}},
             {% endif %}
-            {{product.get_gender_display}}
+            {% if product.female_inventory %}
+              <small><i class="fa-solid fa-mars"></i></small> Female : {{product.female_inventory}}
+            {% endif %}
           </span>
+          <br>
+          <!-- Age -->
+          <span><small>Age:</small> {{ product.get_age }} old</span>
+          <br>
+          <!-- Location -->
           <span>
-             <i class="fa-solid fa-location-dot"></i>
-            {{product.creator.profile.country}}, {{product.creator.profile.city}}
+            <small>
+              <i class="fa-solid fa-location-dot"></i>
+          </small>
+          {{product.creator.city}}, {{product.creator.district}}, {{product.creator.state}}, {{product.creator.country}}
           </span>
           <div class="price-addtocart">
             <div class="product-price">
               {% if product.cal_price == 0 %}
-              <span style="color: #ff5151;"><i class="fa-solid fa-fire-flame-curved"></i> Free</span>
+              <span class="text-danger"><i class="fa-solid fa-fire-flame-curved"></i> Free</span>
               {% else %}
                 <span >{{product.cal_price}}</span>
                 {% if product.format_price != product.cal_price %}
-                  <span class="old" >{{ product.format_price}}</span>
+                  <span class="old text-danger">{{ product.format_price}}</span>
                 {% endif %}
               {% endif %}
             </div>

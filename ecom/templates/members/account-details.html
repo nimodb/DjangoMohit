@@ -26,7 +26,7 @@
                 <a href="{% url 'members:dashboard' %}"
                   ><i class="fa-solid fa-gauge"></i> Dashboard</a
                 >
-                {% if user.profile.verified == 'V' %}
+                {% if user.verified == 'V' %}
                 <a href="{% url 'members:list_posts' %}"
                   ><i class="fa-solid fa-paw"></i> Posts</a
                 >
@@ -64,9 +64,9 @@
                         {% csrf_token %}
                         <div class="col-lg-12 col-md-6">
                           <div class="cart-tax">
-                            {% if profile_form.errors %}
+                            {% if form.errors %}
                             <ul>
-                                {% for field in profile_form %}
+                                {% for field in form %}
                                     {% for error in field.errors %}
                                     <div class="alert alert-danger" role="alert">
                                       {{error}}
@@ -88,17 +88,17 @@
                                     <div class="col-lg-5">
                                       <div class="single-input-item">
                                         <label for="id_email"
-                                          >* {{user_form.email.label}}</label
+                                          >* {{form.email.label}}</label
                                         >
-                                        {{ user_form.email }}
+                                        {{ form.email }}
                                       </div>
                                     </div>
                                     <div class="col-lg-4">
                                       <div class="single-input-item">
                                         <label for="id_phone"
-                                          >* {{profile_form.phone.label}}</label
+                                          >* {{form.phone.label}}</label
                                         >
-                                        {{profile_form.phone}}
+                                        {{form.phone}}
                                       </div>
                                     </div>
                                   </div>
@@ -106,17 +106,17 @@
                                     <div class="col-lg-6">
                                       <div class="single-input-item">
                                         <label for="id_first_name"
-                                          >* {{user_form.first_name.label}}</label
+                                          >* {{form.first_name.label}}</label
                                         >
-                                        {{ user_form.first_name }}
+                                        {{ form.first_name }}
                                       </div>
                                     </div>
                                     <div class="col-lg-6">
                                       <div class="single-input-item">
                                         <label for="id_last-name"
-                                          >* {{user_form.last_name.label}}</label
+                                          >* {{form.last_name.label}}</label
                                         >
-                                        {{ user_form.last_name }}
+                                        {{ form.last_name }}
                                       </div>
                                     </div>
                                   </div>
@@ -124,33 +124,33 @@
                                     <div class="col-lg-3">
                                       <div class="single-input-item">
                                         <label for="id_country"
-                                          >* {{profile_form.country.label}}</label
+                                          >* {{form.country.label}}</label
                                         >
-                                        {% render_field profile_form.country autocomplete="off" hx-get="/my-account/check-state/" hx-target="#id_state" hx-trigger="change" %}
+                                        {% render_field form.country autocomplete="off" hx-get="/dashboard/check-state/" hx-target="#id_state" hx-trigger="change" %}
                                       </div>
                                     </div>
                                     <div class="col-lg-3">
                                       <div class="single-input-item">
                                         <label for="id_state"
-                                          >* {{profile_form.state.label}}</label
+                                          >* {{form.state.label}}</label
                                         >
-                                        {% render_field profile_form.state autocomplete="off" hx-get="/my-account/check-district/" hx-target="#id_district" hx-trigger="change" %}
+                                        {% render_field form.state autocomplete="off" hx-get="/dashboard/check-district/" hx-target="#id_district" hx-trigger="change" %}
                                       </div>
                                     </div>
                                     <div class="col-lg-3">
                                       <div class="single-input-item">
                                         <label for="id_district"
-                                          >* {{profile_form.district.label}}</label
+                                          >* {{form.district.label}}</label
                                         >
-                                        {% render_field profile_form.district autocomplete="off" hx-get="/my-account/check-city/" hx-target='#id_city' hx-trigger='change' %}
+                                        {% render_field form.district autocomplete="off" hx-get="/dashboard/check-city/" hx-target='#id_city' hx-trigger='change' %}
                                       </div>
                                     </div>
                                     <div class="col-lg-3">
                                       <div class="single-input-item">
                                         <label for="id_city"
-                                          >* {{profile_form.city.label}}</label
+                                          >* {{form.city.label}}</label
                                         >
-                                        {% render_field profile_form.city autocomplete="off" %}
+                                        {% render_field form.city autocomplete="off" %}
                                       </div>
                                     </div>
                                   </div>

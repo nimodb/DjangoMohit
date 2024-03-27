@@ -1,0 +1,78 @@
+{% extends 'base.html' %} {% load static %}
+
+<!-- !SEO blocks -->
+<!-- Title -->
+{% block title %}Contact Us{% endblock %}
+<!-- Description -->
+{% block description %}{% endblock %}
+<!-- Keywords -->
+{% block keywords %}{% endblock %}
+<!-- Author -->
+{% block author %}{% endblock %}
+
+<!-- Content -->
+{% block content %}
+<div class="contact-area pt-85 pb-90">
+    <div class="container">
+        <div class="contact-info-wrap mb-50">
+            {% if messages %} {% for msg in messages %}
+            <div class="alert alert-{{msg.tags}} alert-dismissible fade show" role="alert">
+                {{msg}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %} {% endif %}
+            <h3>contact info</h3>
+            <div class="row">
+                <div class="col-lg-4 col-md-4">
+                    <div class="single-contact-info text-center mb-30">
+                        <i class="ti-location-pin"></i>
+                        <h4>our address</h4>
+                        <p>77 seventh Street, USA.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <div class="single-contact-info extra-contact-info text-center mb-30">
+                        <ul>
+                            <li><i class="ti-mobile"></i> 716-298-1822</li>
+                            <li><i class="ti-email"></i> <a href="#"> info@example.com</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <div class="single-contact-info text-center mb-30">
+                        <i class="ti-alarm-clock"></i>
+                        <h4>openning hour</h4>
+                        <p>Monday - Friday. 9:00am - 5:00pm</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="get-in-touch-wrap">
+            <h3>Get In Touch</h3>
+            <div class="contact-from contact-shadow">
+                <form id="contact-form" action="{% url 'store:contact' %}" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-lg-6">
+                            {{ form.name }}
+                        </div>
+                        <div class="col-lg-6">
+                            {{ form.email }}
+                        </div>
+                        <div class="col-lg-12">
+                            {{ form.subject }}
+                        </div>
+                        <div class="col-lg-12">
+                            {{ form.message }}
+                        </div>
+                        <div class="col-lg-12">
+                            <button class="submit" type="submit">Send Message</button>
+                        </div>
+                    </div>
+                </form>
+                <p class="form-messege"></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,31 +1,50 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
-from members.models import Profile, Review, Reply
+from .models import Profile
 
 
-# Register your models here.
-admin.site.register(Profile)
-
-
-@admin.register(Reply)
-class ReplyAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "review")
-
-
-@admin.register(Review)
-class ReviewAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "rating")
-
-
-class ProfileInline(admin.StackedInline):
-    model = Profile
-
-
-class UserAdmin(admin.ModelAdmin):
-    model = User
-    list_display = ("id", "username", "first_name", "last_name", "email")
-    inlines = [ProfileInline]
-
-
-admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
+# Register your models here
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = [
+        "username",
+        "phone",
+        "country",
+        "state",
+        "district",
+        "city",
+        "verified",
+        "data_modified",
+    ]
+    search_fields = ["username", "phone", "country", "state", "district", "city"]
+    list_filter = ["verified"]
+    fieldsets = (
+        (
+            "User Information",
+            {
+                "fields": ("username", "phone"),
+            },
+        ),
+        (
+            "Location",
+            {
+                "fields": ("country", "state", "district", "city"),
+            },
+        ),
+        (
+            "Verification Status",
+            {
+                "fields": ("verified",),
+            },
+        ),
+        (
+            "Permissions",
+            {"fields": ("is_staff", "is_active", "groups", "user_permissions")},
+        ),
+        (
+            "Metadata",
+            {
+                "fields": ("data_modified", "date_joined"),
+            },
+        ),
+    )
+    readonly_fields = ["data_modified", "date_joined"]

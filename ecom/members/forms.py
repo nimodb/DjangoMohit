@@ -6,10 +6,11 @@ from django.contrib.auth.forms import (
     UserChangeForm,
     PasswordChangeForm,
 )
+
 from django.contrib.auth.models import User
 from members.models import Profile
 from store.models import Product, Group, Breed, ProductPhoto, ProductVideo
-from location.models import Country, State, District, City
+from members.models import Country, State, District, City
 from dynamic_forms import DynamicField, DynamicFormMixin
 
 
@@ -78,17 +79,23 @@ class InfoUserForm(DynamicFormMixin, forms.ModelForm):
         initial=initial_city,
         required=False,
     )
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)
+    email = forms.EmailField(required=True)
     phone = PhoneNumberField(widget=PhoneNumberPrefixWidget(initial="IN"))
 
     class Meta:
         model = Profile
-        fields = ["phone", "country", "state", "district", "city"]
-
-
-class RegistrationForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = User
-        fields = ["username", "first_name", "last_name", "email"]
+        fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "country",
+            "state",
+            "district",
+            "city",
+        ]
 
 
 class UpdateUserForm(UserChangeForm):
@@ -99,6 +106,12 @@ class UpdateUserForm(UserChangeForm):
     class Meta:
         model = User
         fields = ["first_name", "last_name", "email"]
+
+
+class RegistrationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ["username", "first_name", "last_name", "email"]
 
 
 class ChangePasswordForm(PasswordChangeForm):

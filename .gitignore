@@ -1,19 +1,31 @@
-# Created by https://www.toptal.com/developers/gitignore/api/python,django
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,django
+# Created by https://www.toptal.com/developers/gitignore/api/django,database,python
+# Edit at https://www.toptal.com/developers/gitignore?templates=django,database,python
+
+### Folder ###
+ssh-key/
+source-data/
+test.py
+
+### Database ###
+*.accdb
+*.db
+*.dbf
+*.mdb
+*.pdb
+*.sqlite3
+*.db-shm
+*.db-wal
 
 ### Django ###
 *.log
 *.pot
 *.pyc
-*.pem
-*.pem.pub
 __pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media
-staticfiles/
-ssh-key/
+static/
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.
@@ -143,7 +155,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-source-data/
 
 # Spyder project settings
 .spyderproject
@@ -268,4 +279,4 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
-# End of https://www.toptal.com/developers/gitignore/api/python,django
+# End of https://www.toptal.com/developers/gitignore/api/django,database,python

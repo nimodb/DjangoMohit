@@ -25,7 +25,7 @@
                 <a href="{% url 'members:dashboard' %}"
                   ><i class="fa-solid fa-gauge"></i> Dashboard</a
                 >
-                {% if user.profile.verified == 'V' %}
+                {% if user.verified == 'V' %}
                 <a href="{% url 'members:list_posts' %}"
                   ><i class="fa-solid fa-paw"></i> Posts</a
                 >
@@ -147,30 +147,29 @@
                               <!-- Breed and Group -->
                               <h5 class="card-title">
                                 <small>Breed:</small>
-                                <a href="product-details.html">{{product.breed}}</a>
-                                <a href="product-details.html"><small>({{product.group}})</small></a>
+                                <a href="{% url 'store:group_detail' slug=product.group.slug %}">{{product.breed}}</a>
+                                <a href="{% url 'store:group_detail' slug=product.group.slug %}"><small>({{product.group}})</small></a>
                               </h5>
                               <!-- Gender -->
                               <h5 class="card-title">
                                 <small>Gender:</small>
                                 {% if product.male_inventory %}
-                                  Male : {{product.male_inventory}}
-                                {% endif %}
-                                {% if product.female_inventory %}
-                                  Female : {{product.female_inventory}}
-                                {% endif %}
+              <small><i class="fa-solid fa-venus"></i></small> Male : {{product.male_inventory}},
+            {% endif %}
+            {% if product.female_inventory %}
+              <small><i class="fa-solid fa-mars"></i></small> Female : {{product.female_inventory}}
+            {% endif %}
                               </h5>
                               <!-- Age -->
                               <h5 class="card-title">
-                                <small>Age:</small>
-                                {{ product.get_age }} old
+                                <small>Age:</small> {{ product.get_age }} old
                               </h5>
                               <!-- Location -->
                               <h5 class="card-title">
                                 <small>
                                   <i class="fa-solid fa-location-dot"></i>
-                                </small>
-                                {{product.creator.profile.country}}, {{product.creator.profile.state}}, {{product.creator.profile.district}}, {{product.creator.profile.city}}
+                              </small>
+                              {{product.creator.city}}, {{product.creator.district}}, {{product.creator.state}}, {{product.creator.country}}
                               </h5>
                               <!-- Price -->
                               <div class="pro-list-price">
@@ -188,7 +187,7 @@
                                 <!-- Contact -->
                                 <div class="col">
                                     <div class="product-list-action">
-                                        <a class="pr-10" title="Call" href="tel:{{product.creator.profile.phone}}"><i class="fa-solid fa-phone"></i></a>
+                                        <a class="pr-10" title="Call" href="tel:{{product.creator.phone}}"><i class="fa-solid fa-phone"></i></a>
                                         <a title="E-mail" href="mailto:{{product.creator.email}}"><i class="fa-solid fa-envelope"></i></a>
                                     </div>
                                 </div>

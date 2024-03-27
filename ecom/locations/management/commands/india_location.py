@@ -1,7 +1,7 @@
 # Run: python .\manage.py india_location
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
-from location.models import Country, State, District, City
+from locations.models import Country, State, District, City
 
 
 class Command(BaseCommand):
