@@ -43,7 +43,7 @@
                     <div class="col-xl-2 col-lg-2">
                         <div class="logo">
                             <a href="{% url 'store:home' %}">
-                                <img src="{% static 'assets/images/logo/logo-1-dog.png' %}" alt="logo" width="100" />
+                                <img src="{% static 'assets/images/logo/Logo-1-dog.png' %}" alt="logo" width="100" />
                             </a>
                         </div>
                     </div>
@@ -95,13 +95,14 @@
                 <div class="col-6">
                     <div class="mobile-logo">
                         <a href="{% url 'store:home' %}">
-                            <img src="{% static 'assets/images/logo/logo-1-dog.png' %}" alt="logo" width="80" />
+                            <img src="{% static 'assets/images/logo/Logo-1-dog.png' %}" alt="logo" width="80" />
                         </a>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="header-right-wrap">
                         <div class="cart-wrap common-style mr-20">
+                            {% if user.is_authenticated %}
                             <a href="{% url 'members:wishlist' %}" class="position-relative">
                                 <i class="fa-brands fa-gratipay"></i> <small>wishlist</small>
                                 <small>
@@ -110,6 +111,11 @@
                                     </span>
                                 </small>
                             </a>
+                            {% else %}
+                            <a href="{% url 'members:login' %}"> 
+                                <i class="fa-solid fa-arrow-right-to-bracket"></i> <small>Login</small>
+                            </a>
+                            {% endif %}
                         </div>
                         <div class="mobile-off-canvas">
                             <a class="mobile-aside-button" href="#"><i class="la la-navicon la-2x"></i></a>
